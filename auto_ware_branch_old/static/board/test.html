@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <script src="js/jquery.min.js"></script>
+</head>
+<body>
+<input id="msg" type="text">
+<button id="connect" onclick="Connect();">Connect</button>
+<button id="send" onclick="Send();">Send</button>
+<button id="close" onclick="Close();">Close</button>
+<script>
+  var socket;
+
+  function Connect() {
+    try {
+      socket = new WebSocket('wss://192.168.1.107:4001');
+    } catch (e) {
+      alert('error');
+      return;
+    }
+    socket.onopen = sOpen;
+    socket.onerror = sError;
+    socket.onmessage = sMessage;
+    socket.onclose = sClose;
+  }
+
+  function sOpen() {
+    console.log('connect success!');
+  }
+
+  function sError(e) {
+    console.log(e);
+  }
+
+  function sMessage(msg) {
+    console.log(msg);
+  }
+
+  function sClose(e) {
+    console.log(e.code);
+  }
+
+  function Send() {
+    socket.send(document.getElementById("msg").value);
+  }
+
+  function Close() {
+    socket.close();
+  }
+
+  Connect();
+</script>
+</body>
+</html>

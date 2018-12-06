@@ -1,0 +1,324 @@
+<!--新增原始记录模板-->
+<template>
+  <div ref="dialogMain">
+    <jk-dialog :title="form.title" :visible.sync="dialogVisible">
+      <div style="height: 100%;width: 360px; overflow-y: auto;float: left;border: 1px solid #ddd">
+        <el-button class="actionBtn" type="primary" @click="editTemplateInfo">编辑模板信息</el-button>
+        <el-button class="actionBtn" type="primary" @click="addTemplateProperty">新增模板属性</el-button>
+        <el-button style="margin: 10px;" @click="save" v-loading="loading.save" type="primary">保存</el-button>
+        <el-table :data="form.tempProperty" style="width: 100%"
+                  v-loading="loading.list" element-loading-text="加载中">
+          <el-table-column label="名称">
+            <template slot-scope="scope">
+              {{`${scope.row.name}(${scope.row.code})`}}<span
+              style="display: none">{{JSON.stringify(scope.row)}}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" width="100">
+            <template slot-scope="scope">
+              <el-button @click="editProperty(scope)" type="text" icon="el-icon-edit" size="mini"></el-button>
+              <el-button @click="deleteProperty(scope)" type="text" icon="el-icon-delete" size="mini"></el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+    </jk-dialog>
+    <edit-temp-dialog ref="editTempInfo" @holeTempInfo="holeTempInfo" @loadPdfImg="loadPdfImg"></edit-temp-dialog>
+    <add-temp-prop-dialog ref="addTempProp" @holdTempProperty="holdTempProperty"></add-temp-prop-dialog>
+  </div>
+</template>
+<script type="text/ecmascript-6">
+  import storage from 'storage'
+  import * as api from 'src/api/index'
+
+  export default {
+    components: {
+      jkDialog: require('common/dialog-side.vue'),
+      editTempDialog: require('./dialog-edit-template-info.vue'),
+      addTempPropDialog: require('./dialog-add-edit-template-property.vue')
+//      stickedDom: require('common/stickedDom.vue')
+    },
+    created () {
+    },
+    data () {
+      return {
+        height: 1200,
+        dialogVisible: false,
+        user: null,
+        imgSrc: '',
+        form: {
+          title: '',
+          id: '',
+          tempInfo: {},
+          tempProperty: [],
+          stickedDom: []
+        },
+        loading: {
+          list: false,
+          save: false
+        },
+        dragProperty: null,
+        moveProperty: null,
+        tableCode: []
+      }
+    },
+    props: {},
+    mounted () {
+      this.user = storage.getUser()
+    },
+    computed: {},
+    updated () {
+    },
+    methods: {
+      show (formData) {
+        this.dialogVisible = true
+        if (formData.title === '修改') {
+          Object.assign(this.form, formData)
+          this.initTempData(formData)
+        } else {
+          this.form.title = formData.title
+          this.form.id = ''
+          this.form.tempInfo = {}
+          this.form.tempProperty = []
+          this.form.stickedDom = []
+          this.imgSrc = ''
+        }
+      },
+      // 列表页面点击修改，查询模板数据
+      initTempData (data) {
+        this.loading.list = true
+        api.physicalLaboratory.originalTempManage.getLabOriginalTemplateVoById({id: data.id}).then((response) => {
+          let data = response.data
+          // console.log(data)
+          this.renderTempData(data.data)
+        }).finally(() => {
+          this.loading.list = false
+        })
+      },
+      // 给模板数据赋值
+      renderTempData (data) {
+        // 当前编辑项的主键id
+        // console.log(data)
+        this.form.id = data.id
+        // 模板属性列表
+        this.form.tempProperty = data.labOriginalTemplateAttributeVos
+        let tableArrCode = []
+        for (let i = 0; i < data.labOriginalTemplateAttributeVos.length; i++) {
+          if (data.labOriginalTemplateAttributeVos[i].type === 'TABLE') {
+            tableArrCode.push({code: data.labOriginalTemplateAttributeVos[i].code, name: data.labOriginalTemplateAttributeVos[i].name})
+          }
+        }
+        this.tableCode = tableArrCode
+        // 模板信息
+        let {name, groupId, fileId, calType, calOriRecordNumber, resultPricision, isGuideSample, isFineness, isCrude} = data
+        this.form.tempInfo = {
+          name,
+          groupId,
+          fileId,
+          calType,
+          calOriRecordNumber,
+          resultPricision,
+          isGuideSample,
+          isFineness,
+          isCrude
+        }
+      },
+      // 编辑模板信息
+      editTemplateInfo () {
+        this.$refs.editTempInfo.show(this.form.tempInfo)
+      },
+      // 新增模板属性
+      addTemplateProperty () {
+        this.$refs.addTempProp.show({title: '新增', tempProperty: this.form.tempProperty})
+      },
+      // 编辑模板属性
+      editProperty (scope) {
+        scope['title'] = '修改'
+        scope['tempProperty'] = this.form.tempProperty
+        this.$refs.addTempProp.show(scope)
+      },
+      // 删除模板属性
+      deleteProperty (scope) {
+        this.$confirm('确定删除', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.form.tempProperty.splice(scope.$index, 1)
+        })
+      },
+      // 暂存模板信息
+      holeTempInfo (tempInfo) {
+        this.form.tempInfo = tempInfo
+      },
+      // 加载图片
+      loadPdfImg (data) {
+        if (data.success) {
+          this.imgSrc = `data:image/jpeg;base64,${data.data.pdfImg}`
+        } else {
+          this.imgSrc = ''
+        }
+      },
+      // 暂存模板属性
+      holdTempProperty (property, operate) {
+        let {values} = Object
+        let names = []
+        // 查找这个code的property索引
+        let index = this.form.tempProperty.findIndex((value, index, arr) => {
+          return value.code === property.code
+        })
+        // 操作开始
+        if (operate === '修改') {
+          if (index === -1) {
+            this.$message.error('不存在该属性')
+            return
+          }
+          names = []
+          for (let value of values(this.form.tempProperty)) {
+            if (value.code !== property.code) {
+              names.push(value.name)
+            }
+          }
+          if ((this.form.tempProperty && this.form.tempProperty.length > 0) && names.includes(property.name)) {
+            this.$message.error('同名属性已经存在')
+            return
+          }
+          this.form.tempProperty.splice(index, 1, property)
+        } else {
+          // 判断同名属性是否存在
+          names = []
+          for (let value of values(this.form.tempProperty)) {
+            names.push(value.name)
+          }
+          if ((this.form.tempProperty && this.form.tempProperty.length > 0) && names.includes(property.name)) {
+            this.$message.error('同名属性已经存在')
+            return
+          }
+          if (index > -1) {
+            this.$message.error('code重复')
+            return
+          }
+          this.form.tempProperty.push(property)
+        }
+        this.$refs.addTempProp.close()
+      },
+      // 所有模板信息保存到数据库
+      save () {
+        // if (this.form.tempInfo.name === '' || this.form.tempInfo.groupId === '' || this.form.tempInfo.fileId === '' ||
+        if (this.form.tempInfo.name === '' || this.form.tempInfo.groupId === '' ||
+          this.form.tempInfo.calType === '' || this.form.tempInfo.calOriRecordNumber === '') {
+          this.$message.error('模板信息不全')
+          return
+        }
+        if (this.form.tempProperty.length === 0) {
+          this.$message.error('模板属性为空')
+          return
+        }
+        /* -------------------------模板信息-------------------------------------------- */
+        let param = Object.assign({}, this.form.tempInfo, {creator: this.user.account, modifier: this.user.account})
+        /* ------------------------属性数组-------------------------------------------- */
+        let isResultNodeIndex = this.form.tempProperty.findIndex((value, index, arr) => {
+          return value.isResultNode === 'Y'
+        })
+        if (isResultNodeIndex === -1) {
+          this.$message.error('必须添加一个结果节点属性')
+          return
+        }
+        let attribute = this.form.tempProperty.map((item, index, input) => {
+          return {
+            creator: this.user.userId,
+            modifier: this.user.userId,
+            name: item.name,
+            documentType: item.documentType,
+            selectStaticMapId: item.selectStaticMapId,
+            code: item.code,
+            type: item.type,
+            refCode: item.refCode,
+            refTemplateId: item.refTemplateId,
+            dicType: item.dicType,
+            calculationFormula: item.calculationFormula,
+            pricision: item.pricision,
+            pricisionType: item.pricisionType,
+            refTemplateAttributeCode: item.refTemplateAttributeCode,
+            // 这里已经转换成Y，
+            isResultNode: item.isResultNode,
+            // 指标评定数组
+            labIndexEvaluationVos: item.labIndexEvaluationVos,
+            // 测试次数
+            testNumber: item.testNumber,
+            // table节点
+            refTableCode: item.refTableCode,
+            // 是否设备采集
+            isEquipmentCollection: item.isEquipmentCollection,
+            // 设备ID
+            deviceId: item.deviceId
+          }
+        })
+        Object.assign(param, {labOriginalTemplateAttributeVos: attribute})
+        // console.log(param)
+        /* ------------------------请求原始记录单接口-------------------------------------------- */
+        this.loading.save = true
+        if (this.form.title === '修改') {
+          Object.assign(param, {id: this.form.id})
+          api.physicalLaboratory.originalTempManage.updateLabOriginalTemplateDo(param).then((response) => {
+            let data = response.data
+            if (data.success) {
+              this.$message.success('修改成功')
+              this.$emit('getTempData')
+              this.dialogVisible = false
+            } else {
+              this.$message.error(data.errorMsg)
+            }
+          }).catch((e) => {
+            console.log(e)
+          }).finally(() => {
+            this.loading.save = false
+          })
+        } else {
+          api.physicalLaboratory.originalTempManage.createLabOriginalTemplateDo(param).then((response) => {
+            let data = response.data
+            if (data.success) {
+              this.$message.success('新增成功')
+              this.$emit('getTempData')
+              this.dialogVisible = false
+            } else {
+              this.$message.error(data.errorMsg)
+            }
+          }).catch((e) => {
+            console.log(e)
+          }).finally(() => {
+            this.loading.save = false
+          })
+        }
+      }
+    }
+  }
+</script>
+<style>
+  .row-select {
+    background-color: #4b646f !important;
+  }
+</style>
+<style scoped>
+  .left-row {
+    display: flex;
+    flex-direction: column;
+    padding-right: .5rem;
+  }
+
+  .row {
+    margin-left: 0;
+    margin-bottom: 1rem;
+  }
+
+  .grid-content {
+    height: auto;
+    border: 1px solid rgb(223, 230, 236);
+    margin: 0 0.1rem;
+  }
+
+  .bottom-col {
+    text-align: center;
+    margin-top: 0.5rem;
+  }
+</style>

@@ -1,0 +1,27 @@
+/* element ui 样式重置 */
+
+/* form表单 */
+.el-form-item__label {
+  font-weight: 400;
+}
+
+/* 单选 */
+.el-radio__label {
+  font-weight: 400;
+}
+
+/* 面包屑组件非第一个鼠标手势取消 */
+.breadcrumb-wrapper .el-breadcrumb .el-breadcrumb__item:not(:first-child) .el-breadcrumb__item__inner{
+  cursor: default;
+}
+.el-input.width1{
+  width: 240px;
+}
+ /*    loding修改   */
+.el-loading-mask{z-index: 90}
+
+
+
+/*    富文本剪辑器样式修改   */
+.w-editorElem .w-e-toolbar .w-e-menu{z-index: 0;}
+.w-editorElem .w-e-text-container{z-index: 0;}

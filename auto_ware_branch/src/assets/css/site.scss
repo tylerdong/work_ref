@@ -1,0 +1,137 @@
+ul{
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+button,
+input,
+optgroup,
+select,
+textarea {
+  font-family: 'Microsoft YaHei';
+}
+a{
+  cursor: pointer;
+}
+body {
+  font-family: 'Microsoft YaHei', Arial, "Helvetica Neue", Helvetica, sans-serif;
+}
+.fl {
+  float: left;
+}
+.fr {
+  float: right;
+}
+.tl {
+  text-align: left;
+}
+.tr {
+  text-align: right;
+}
+.tc {
+  text-align: center;
+}
+.cf:before, .cf:after,.web:before, .web:after,.web_:before, .web_:after {
+  content:"";display:table;
+}
+.cf:after,.web:after,.web_:after {
+  clear:both;
+}
+.cf {
+  zoom:1;
+}
+.pad-left-20{
+  padding-left: 20px;
+}
+.pad-top-20{
+  padding-top: 20px;
+}
+.pad-right-20{
+  padding-right: 20px;
+}
+.pad-bottom-20{
+  padding-bottom: 20px;
+}
+// 控制台公用搜索，操作栏
+.hy-admin__search-main{
+  background-color: #fff;
+  padding: 10px;
+  margin-bottom: 10px;
+  .el-input{
+    width:200px;vertical-align: middle;margin-right:8px
+  }
+}
+
+.hy-admin__content-main {
+  background-color: #fff;
+}
+
+// 控制台公用分页容器
+.hy-admin__pagination-wrapper{
+  padding-top:10px;
+}
+
+// 控制台公用容器
+.hy-admin__main-container{
+  overflow: auto;
+  padding: 10px;
+}
+
+// 实验室动态标签页切换
+.hy-lab__data-section{
+  margin: -1px 10px 0 10px;
+  background: #fff;
+  border: 1px solid #dee4ec;
+  overflow-y: auto;
+}
+
+// 公共平台容器 待整理
+.hy-pub__main-wrapper {
+  padding: 20px;
+  .floatRight {
+    float: right;
+  }
+
+  .el-title {
+    height: 36px;
+    line-height: 36px;
+    margin-bottom: 10px;
+  }
+  .menu-list{
+    width: 180px;
+  }
+  .floatRight {
+    float: right;
+  }
+  .hy-admin__pagination-wrapper{
+    padding-top:20px;
+  }
+
+  .padtop20{
+    padding-top:20px;
+  }
+  .padbottom20{
+    padding-bottom:20px;
+  }
+  .textCenter{
+    text-align:center;
+  }
+}
+
+
+.hy-table-overflow-x{
+  width: 100% !important;
+  overflow-x: auto !important;
+}
+.hy-table-overflow-y{
+  width: 100% !important;
+  overflow-y: auto !important;
+}
+
+.custom-class {
+  width: 80%;
+}
+
+.x-scroll {
+  overflow-x: auto;
+}
