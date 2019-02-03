@@ -9,3 +9,5 @@
 - 自动外观检客户端
 ## autoinspect_server
 - 自动外观检服务端
+## lottory
+- 年会抽奖程序
