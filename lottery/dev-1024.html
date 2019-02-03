@@ -1,0 +1,138 @@
+<html>
+    <head>
+        <title>2019益路顺年会幸运抽奖</title>
+        <meta charset="UTF-8" />
+        <meta
+            name="viewport"
+            content="width=device-width,initial-scale=1,user-scalable=0"
+        />
+        <meta name="format-detection" content="telephone=no" />
+        <style>
+            body {
+                padding: 0;
+                margin: 0;
+            }
+         
+        </style>
+        <script>
+        var awards = [
+          {cateName: '实物', item: [
+            { name: '幸运奖', 
+              item: [{ "awards": '苏珀尔挂烫机', count: 2, image: './awards/5c5b6238cffb4ab.jpg', isExtract: false },
+                { "awards": '乳胶枕', count: 2, image: '', isExtract: false },
+                {  "awards": '富士相机', count: 2, image: '', isExtract: false },
+                { "awards": '飞利浦剃须刀', count: 2, image: '', isExtract: false },
+                { "awards": '电烤箱', count: 1, image: '', isExtract: false },
+                {  "awards": '电动牙刷', count: 2, image: '', isExtract: false },
+                {  "awards": '博洋家纺四件套', count: 2, image: '', isExtract: false },
+                {  "awards": 'JBL蓝牙音箱', count: 2, image: '', isExtract: false },
+                {  "awards": '眼部按摩仪', count: 1, image: '', isExtract: false },]
+          },
+           {
+              name: '三等奖',
+              item: [
+                { "awards": '纱巾', count: 2, image: '', isExtract: false },
+                { "awards": '行李箱', count: 2, image: '', isExtract: false },
+                { "awards": '破壁机', count: 2, image: '', isExtract: false },
+                { "awards": '金猪手链', count: 2, image: '', isExtract: false },
+              ]
+            },
+            {
+              name: '二等奖',
+              item: [
+                { "awards": '科沃斯扫地机器人', count: 2, image: '', isExtract: false },
+                { "awards": '戴森吹风机', count: 2, image: '', isExtract: false },
+              ]
+            },
+             {
+              name: '一等奖',
+              item: [
+                { "awards": '华为Mate 20 X', count: 2, image: '', isExtract: false },
+              ]
+            },
+            {
+              name: '特等奖',
+              item: [
+                { "awards": '华为MateBook X Pro 笔记本电脑', count: 1, image: '', isExtract: false },
+              ]
+            },
+          ]},
+          {
+            cateName: '现金奖', item: [{
+              name: '三等奖',
+              item: [
+                { "awards": '500元', count: 10, image: '', isExtract: false },
+              ]
+            },
+              {
+                name: '二等奖',
+                item: [
+                  { "awards": '1000元', count: 10, image: '', isExtract: false },
+                ]
+              },
+              {
+                name: '一等奖',
+                item: [
+                  { "awards": '2000元', count: 10, image: '', isExtract: false },
+                ]
+              },
+              {
+                name: '特等奖',
+                item: [
+                  { "awards": '5000元', count: 10, image: '', isExtract: false },
+                ]
+              },
+              {
+                name: '幸运奖',
+                item: [
+                  { "awards": '200元第一组', count: 18, image: '', isExtract: false },
+                  { "awards": '200元第二组', count: 18, image: '', isExtract: false },
+                  { "awards": '200元第三组', count: 18, image: '', isExtract: false },
+                  { "awards": '200元第四组', count: 20, image: '', isExtract: false },
+                ]
+              },
+            ]
+            }
+        ];
+
+        // 判断是否有奖项
+        if (!localStorage.getItem('awards')) {
+          localStorage.setItem('awards', JSON.stringify(awards));
+        }
+        
+        </script>
+    </head>
+
+    <body class="g_bg">
+        <div class="g-head"></div>
+        <div class="lotterybox"></div>
+        <div class="g-foot"></div>
+
+        <!-- Zepto or jQuery -->
+        <script src="./src/zepto.min.js"></script>
+        <!--
+    <link rel="stylesheet" href="./dist/lottery.min.css" />
+    <script src="./dist/lottery.compact.min.js.1"></script>
+-->
+        <!-- <script src="./dist/lottery.compact.min.js"></script> -->
+        <script src="./vendor/confetti.js"></script>
+        <script src="./vendor/move.min.js"></script>
+        <script src="./vendor/material-avatar.js"></script>
+        <script src="./src/lottery-1024.js"></script>
+        <link rel="stylesheet" href="./src/lottery-1024.css" />
+
+        <!-- ROCK ON -->
+        <script>
+            $.lottery({
+                el: '.lotterybox',
+                api: './person.json?r='+Math.random(),
+                once: true,
+                title: 'name',
+                // subtitle: 'company',
+                // desc: "title",
+                timeout: 30,
+                speed: 300
+            })
+        </script>
+    </body>
+</html>

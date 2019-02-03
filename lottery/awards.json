@@ -1,0 +1,124 @@
+[
+  {cateName: '实物', item: [
+      { name: '幸运奖', 
+              item: [
+          {
+            "awards": '苏珀尔挂烫机', count: 2, image: '', isExtract: false
+          },
+          {
+            "awards": '乳胶枕', count: 2, image: '', isExtract: false
+          },
+          {
+            "awards": '富士相机', count: 2, image: '', isExtract: false
+          },
+          {
+            "awards": '飞利浦剃须刀', count: 2, image: '', isExtract: false
+          },
+          {
+            "awards": '电烤箱', count: 1, image: '', isExtract: false
+          },
+          {
+            "awards": '电动牙刷', count: 2, image: '', isExtract: false
+          },
+          {
+            "awards": '博洋家纺四件套', count: 2, image: '', isExtract: false
+          },
+          {
+            "awards": 'JBL蓝牙音箱', count: 2, image: '', isExtract: false
+          },
+          {
+            "awards": '眼部按摩仪', count: 2, image: '', isExtract: false
+          },
+        ]
+      },
+      {
+              name: '三等级',
+              item: [
+          {
+            "awards": '纱巾', count: 1, image: '', isExtract: false
+          },
+          {
+            "awards": '箱子', count: 1, image: '', isExtract: false
+          },
+          {
+            "awards": '破壁机', count: 2, image: '', isExtract: false
+          },
+          {
+            "awards": '金猪手链', count: 2, image: '', isExtract: false
+          },
+        ]
+      },
+      {
+              name: '二等级',
+              item: [
+          {
+            "awards": '科沃斯扫地机器人', count: 2, image: '', isExtract: false
+          },
+          {
+            "awards": '戴森吹风机', count: 2, image: '', isExtract: false
+          },
+        ]
+      },
+      {
+              name: '一等级',
+              item: [
+          {
+            "awards": '华为Mate 20 X', count: 2, image: '', isExtract: false
+          },
+        ]
+      },
+      {
+              name: '特等级',
+              item: [
+          {
+            "awards": '华为MateBook X Pro 笔记本电脑', count: 1, image: '', isExtract: false
+          },
+        ]
+      },
+    ]
+  },
+  {
+            cateName: '现金奖', item: [
+      {
+                name: '幸运奖',
+                item: [
+          {
+            "awards": '200元', count: 74, image: '', isExtract: false
+          },
+        ]
+      },
+      {
+                name: '三等级',
+                item: [
+          {
+            "awards": '500元', count: 10, image: '', isExtract: false
+          },
+        ]
+      },
+      {
+                name: '二等级',
+                item: [
+          {
+            "awards": '1000元', count: 10, image: '', isExtract: false
+          },
+        ]
+      },
+      {
+                name: '一等级',
+                item: [
+          {
+            "awards": '2000元', count: 10, image: '', isExtract: false
+          },
+        ]
+      },
+      {
+                name: '特等级',
+                item: [
+          {
+            "awards": '5000元', count: 10, image: '', isExtract: false
+          },
+        ]
+      },
+    ]
+  }
+]
