@@ -1,0 +1,121 @@
+<template>
+  <Modal v-model="modal.show" :title="modal.title" :draggable="true">
+    <Form ref="form" :model="form" :rules="rules" :label-width="80">
+      <FormItem label="集团名" prop="name">
+        <Input placeholder="请输入类目名称" v-model="form.name" clearable/>
+      </FormItem>
+      <FormItem label="编码" prop="code">
+        <Input placeholder="请输入编码" v-model="form.code" clearable/>
+      </FormItem>
+      <FormItem label="集团电话" prop="tel">
+        <Input placeholder="请输入集团电话" v-model="form.tel" clearable/>
+      </FormItem>
+    </Form>
+    <div slot="footer">
+      <Button type="text" size="large" @click="modal.show=false">取消</Button>
+      <Button type="primary" size="large" @click="btnConfirm" :loading="loading.confirm">确定</Button>
+    </div>
+  </Modal>
+</template>
+
+<script>
+import regExp from './../../components/common/regExp'
+import {addManufactureGroup, updateManufactureGroup} from './../../api/data'
+export default {
+  data () {
+    return {
+      modal: {show: false, title: '新增'},
+      loading: {confirm: false},
+      form: {id: '', name: '', code: '', tel: ''},
+      rules: {
+        name: [
+          {required: true, message: '请输入', trigger: 'blur change'},
+          {
+            required: true,
+            trigger: 'blur change',
+            validator: (rule, value, callback) => {
+              if (regExp.name.test(value)) {
+                callback()
+              } else {
+                callback(new Error('名称必须2至20位字符'))
+              }
+            }
+          }
+        ],
+        code: [
+          {required: true, message: '请输入编码', trigger: 'blur change'},
+          {
+            required: true,
+            trigger: 'blur change',
+            validator: (rule, value, callback) => {
+              if (regExp.code.test(value)) {
+                callback()
+              } else {
+                callback(new Error('编码必须2至10位数字或字母'))
+              }
+            }
+          }
+        ]
+      }
+    }
+  },
+  methods: {
+    show (data) {
+      this.modal.show = true
+      this.$refs.form.resetFields()
+      this.modal.title = data ? '编辑' : '新增'
+      if (data) {
+        this.form.code = data.code
+        this.form.name = data.name
+        this.form.tel = data.tel
+        this.form.id = data.id
+      }
+    },
+    btnConfirm () {
+      this.$refs.form.validate(valid => {
+        if (valid) {
+          this.loading.confirm = true
+          let data = {
+            code: this.form.code,
+            name: this.form.name,
+            tel: this.form.tel
+          }
+          if (this.modal.title === '新增') {
+            addManufactureGroup(data).then(response => {
+              if (response.code === 1000) {
+                this.$Notice.success({desc: response.message})
+                this.modal.show = false
+                this.$emit('confirmSuccess')
+              } else {
+                this.$Notice.error({desc: response.message})
+              }
+            }).catch(e => {
+              this.$Notice.error({desc: e.message})
+            }).finally(() => {
+              this.loading.confirm = false
+            })
+          } else {
+            data = Object.assign(data, {id: this.form.id})
+            updateManufactureGroup(data).then(response => {
+              if (response.code === 1000) {
+                this.$Notice.success({desc: response.message})
+                this.modal.show = false
+                this.$emit('confirmSuccess')
+              } else {
+                this.$Notice.error({desc: response.message})
+              }
+            }).catch(e => {
+              this.$Notice.error({desc: e.message})
+            }).finally(() => {
+              this.loading.confirm = false
+            })
+          }
+        }
+      })
+    }
+  }
+}
+</script>
+<style scoped>
+
+</style>

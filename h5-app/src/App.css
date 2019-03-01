@@ -1,0 +1,192 @@
+html, body, h1, h2, h3, h4, h5 {
+  margin: 0;
+  padding: 0;
+}
+body, html {
+  max-width: 1080px;
+  margin: 0 auto;
+  font-family: "PingFang SC-Regular",STHeiti,Microsoft YaHei,Helvetica,Arial,sans-serif;
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
+  background-color: #ffffff !important;
+  overflow-x: hidden;
+  overflow-y: auto;
+  height: 100%;
+  width: 100%;
+  display: flex;
+}
+#root {
+  width: 100%;
+}
+hr {
+  width: 99%;
+  margin: .1rem auto;
+  color: #b7c6ca;
+}
+.font-title {
+  font-size: .5rem;
+  font-weight: 500;
+}
+img { max-width: 100%; }
+article {
+}
+article .container {
+  margin: 20px 20px;
+}
+article .head {
+}
+article .head > div {
+  margin: 10px auto 10px 0;
+  color: #142c31;
+}
+article .head > div span {
+  font-size: .4rem;
+  margin-right: .4rem;
+}
+article .head .title {
+  text-align: left;
+  line-height: 150%;
+}
+article .head .time {
+  color: #b7c6ca;
+  font-size: .3rem;
+}
+article .head .info {
+  font-size: .28rem;
+  font-weight: 400;
+  margin: 0 0 .12rem;
+  color: #888;
+}
+article .head .source {
+  padding-left: .2rem;
+}
+article .content {
+  font-size: .36rem;
+  line-height: 1.5em;
+  word-break: break-all;
+  color: #404040;
+  height: auto;
+}
+article .content > p, article .content > div {
+  margin: 1em auto;
+}
+article .tags {
+  margin: 1em auto 0 auto;
+  display: inline-block;
+}
+article .tags span {
+  color: #6f6f6f;
+  display: inline-block;
+  height: 22px;
+  line-height: 22px;
+  padding: 0 8px;
+  margin-right: 10px;
+  background: #f2f2f2;
+  font-size: 12px;
+}
+.content > div > * {
+  margin-bottom: 1em !important;
+}
+.job {
+}
+.flex-row {
+  display: flex;
+  flex-direction: row;
+}
+.short-msg {
+  flex-wrap: wrap;
+}
+.short-msg>div{
+  margin-right: 0.2rem;
+  margin-bottom: 0.1rem;
+}
+.flex-grow-2 {
+  flex-grow: 2;
+}
+.flex-grow-1 {
+  flex-grow: 1;
+}
+.job-title {
+  justify-content: space-around;
+  width: 100%;
+  font-size: 2em;
+  margin: 0.67em 0;
+}
+.job-title b {
+  display: inline-block;
+  width: 50%;
+  font-weight: 500;
+  color: #464646;
+}
+.job-title b:nth-child(2) {
+  text-align: right;
+  font-size: smaller;
+}
+.job-title b:nth-child(2) small {
+  margin-left: 0.1rem;
+}
+
+.job {
+  color: #717171;
+}
+
+.job table {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.job table tr td {
+  height: 0.7rem;
+  line-height: 0.7rem;
+  font-size: 0.4rem;
+}
+.job table tr>td:nth-child(1) {
+  width: 20%;
+  vertical-align: top;
+  color: #464646;
+}
+.job table tr>td:nth-child(2) {
+  text-indent: 0.2rem;
+}
+.item-div {
+  display: inline-block;
+  text-indent: 0.3rem;
+}
+
+.map-div {
+  width: 100%;
+  height: 10em;
+  border-top: 0.001rem solid #f5f3f3;
+}
+
+.map-div h2.addr {
+  font-size: 0.45rem;
+  height: 1.2rem;
+  line-height: 1.2rem;
+  font-weight: 400;
+  text-align: center;
+}
+.tel {
+  height: 1.5rem;
+  line-height: 1.5rem;
+  left: 0;
+  margin-top: 0.2rem;
+}
+.tel li {
+  display: block;
+  background-color: #f5f5f5;
+  font-size: 0.42rem;
+}
+.tel li span {
+  margin-left: 20%;
+  font-weight: 100;
+  font-size: 0.47rem;
+}
+a.tel-phone:link, a.tel-phone:visited, a.tel-phone:hover, a.tel-phone:active {
+  display: inline-block;
+  margin-left: 20%;
+  color: #717171;
+  text-decoration:none;
+}
+.map>img {
+  width: 100%;
+}
