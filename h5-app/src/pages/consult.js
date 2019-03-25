@@ -17,7 +17,7 @@ class Consult extends Component {
   }
 
   initData () {
-    Toast.loading('loading...')
+    Toast.loading('loading...', 0)
     let params = this.props.match.params
     api.article({articleId: params.id}).then(response => {
       let data = response.data.data

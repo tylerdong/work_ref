@@ -17,7 +17,7 @@ class Flash extends Component {
   }
 
   initData () {
-    Toast.loading('loading...')
+    Toast.loading('loading...', 0)
     let params = this.props.match.params
     api.newsFlash({articleId: params.id}).then(response => {
       let data = response.data.data

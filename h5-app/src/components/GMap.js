@@ -1,6 +1,14 @@
 import React, { Component } from 'react'
 
 export default class GMap extends Component {
+constructor(props){
+  super(props)
+  this.openMap = this.openMap.bind(this)
+}
+
+  openMap(data){
+
+  }
 
   componentWillMount () {
     let coo = this.props.jobAddrMap.split(',').map(c => parseFloat(c))
@@ -14,7 +22,7 @@ export default class GMap extends Component {
     this.setState({
       key: '22ec7787481fea9f2192ba74ad6ea097',
       version: '1.4.13',
-      zoom: 16,
+      zoom: 17,
       resizeEnable: true,
       center: center,
       content: `<div><h4>地址</h4><p>This is content of this info window</p></div>`,
@@ -26,7 +34,7 @@ export default class GMap extends Component {
 
   render() {
     return (
-      <div className="map">
+      <div className="map" >
         <img alt="地图" src={this.state.src}/>
       </div>
     )

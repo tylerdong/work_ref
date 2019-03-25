@@ -17,7 +17,7 @@ switch (process.env.NODE_ENV) {
 
 const instance = axios.create({
   baseURL: `${baseUrl}`,
-  withCredentials: true
+  withCredentials: false
 })
 /**
  * 添加请求拦截器，在header中添加token字段
