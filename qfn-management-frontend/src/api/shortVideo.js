@@ -41,3 +41,11 @@ export const getUserList = params => {
     params: params
   })
 }
+// 作者
+export const getTestAuth = params => {
+  return axios.request({
+    url: 'quotation/qn/getTestAuth',
+    method: 'get',
+    params: params
+  })
+}

@@ -1,31 +1,36 @@
 <template>
   <div>
-      <div class="mb-20 clearfix">更新时间：
-        <DatePicker
-          :value="[search.startTime,search.endTime]"
-          format="yyyy-MM-dd"
-          transfer="transfer"
-          type="daterange"
-          placement="bottom-end"
-          placeholder="选择时间区间"
-          @on-change="handleDateChange"
-          style="margin-top:10px;"
-          class="length-16-6rem m-r-10 mt-10"
-        ></DatePicker>审核状态：
-        <Select v-model="search.status" class="m-r-10" style="width:100px;"  v-if="statusList.length" clearable>
-          <Option v-for="item in statusList" :value="item.status" :key="item.status">{{ item.showStatus }}</Option>
-        </Select>来源类型：
-        <Select
-          v-model="search.source"
-          class="length-16-6rem m-r-10"
-          style="width:100px;"
-          clearable
-        >
-          <Option v-for="item in sourceList" :value="item.value" :key="item.value">{{ item.label }}</Option>
-        </Select>主题搜索：
-        <Input type="text" v-model="search.jobVacancy" style="width:220px;margin-right:10px;"></Input>
-        <Button @click="handlerSearch" class="getData-btn" type="primary" :loading="loading">搜索</Button>
-      </div>
+    <div class="mb-20 clearfix">更新时间：
+      <DatePicker
+        :value="[search.startTime,search.endTime]"
+        format="yyyy-MM-dd"
+        transfer="transfer"
+        type="daterange"
+        placement="bottom-end"
+        placeholder="选择时间区间"
+        @on-change="handleDateChange"
+        style="margin-top:10px;"
+        class="length-16-6rem m-r-10 mt-10"
+      ></DatePicker>审核状态：
+      <Select
+        v-model="search.status"
+        class="m-r-10"
+        style="width:100px;"
+        v-if="statusList.length"
+        clearable
+      >
+        <Option
+          v-for="item in statusList"
+          :value="item.status"
+          :key="item.status"
+        >{{ item.showStatus }}</Option>
+      </Select>来源类型：
+      <Select v-model="search.source" class="length-16-6rem m-r-10" style="width:100px;" clearable>
+        <Option v-for="item in sourceList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+      </Select>主题搜索：
+      <Input type="text" v-model="search.jobVacancy" style="width:220px;margin-right:10px;"></Input>
+      <Button @click="handlerSearch" class="getData-btn" type="primary" :loading="loading">搜索</Button>
+    </div>
     <Table
       :loading="loading"
       ref="selection"
@@ -45,7 +50,15 @@
       show-total
     />
 
-    <Modal v-model="modals.audit.isShow" width="800" :loading="modals.audit.loading" :title="modals.audit.title" @on-ok="postAudit">
+    <Modal
+      v-model="modals.audit.isShow"
+      width="800"
+      :loading="modals.audit.loading"
+      :title="modals.audit.title"
+      :mask-closable="false"
+      @on-ok="postAudit"
+      @on-visible-change="stopPlay"
+    >
       <Form
         class="n-table"
         ref="auditForm"
@@ -57,10 +70,43 @@
         <FormItem label="视频标题">{{modals.audit.data.detailTitle}}</FormItem>
         <FormItem label="视频更近进度">第{{modals.audit.data.videoCurrentNum}}集</FormItem>
         <FormItem label="视频提供者名称">{{modals.audit.data.author}}</FormItem>
-        <FormItem label="视频"><video style="width:200px;height:358px;" :src="modals.audit.data.videoFdfsUrl" controls></video></FormItem>
+        <FormItem label="视频">
+          <video
+            ref="videoPlayer"
+            style="max-height:358px;"
+            :src="modals.audit.data.videoFdfsUrl"
+            controls
+          ></video>
+          <div>
+            <RadioGroup v-model="playSpeed" @on-change="setPlaySpeed">
+              <Radio :label="1">
+                <span>正常</span>
+              </Radio>
+              <Radio :label="2">
+                <span>2倍速</span>
+              </Radio>
+              <Radio :label="4">
+                <span>4倍速</span>
+              </Radio>
+              <Radio :label="8">
+                <span>8倍速</span>
+              </Radio>
+            </RadioGroup>
+          </div>
+        </FormItem>
         <FormItem v-if="modals.audit.data.remark" label="审核备注">{{modals.audit.data.remark}}</FormItem>
-        <FormItem prop="examineComment" v-if="modals.audit.type==='audit'" label="审核备注" style="margin-bottom: 20px;">
-          <Input v-model="modals.audit.postData.examineComment" type="textarea" style="width:500px" placeholder="备注"/>
+        <FormItem
+          prop="examineComment"
+          v-if="modals.audit.type==='audit'"
+          label="审核备注"
+          style="margin-bottom: 20px;"
+        >
+          <Input
+            v-model="modals.audit.postData.examineComment"
+            type="textarea"
+            style="width:500px"
+            placeholder="备注"
+          />
         </FormItem>
         <FormItem prop="status" v-if="modals.audit.type==='audit'" label="审核结果">
           <Select v-model="modals.audit.postData.status" style="width:200px" filterable>
@@ -87,8 +133,14 @@ import elements from '@/config/elements'
 import dateFns from 'date-fns'
 export default {
   name: 'video-tab',
+  props: {
+    theme: {
+      default: ''
+    }
+  },
   data () {
     return {
+      playSpeed: 1,
       search: {
         startTime: '',
         endTime: '',
@@ -105,7 +157,9 @@ export default {
           title: '审核',
           data: {},
           rules: {
-            jobAddrArea: [{ required: true, message: '为必填项', trigger: 'blur' }],
+            jobAddrArea: [
+              { required: true, message: '为必填项', trigger: 'blur' }
+            ],
             status: [{ required: true, message: '为必填项', trigger: 'blur' }]
           },
           postData: {
@@ -117,7 +171,10 @@ export default {
       },
       cities: [],
       statusList: [],
-      sourceList: [{'label': '个人', 'value': '个人'}, {'label': '公司', 'value': '公司'}],
+      sourceList: [
+        { label: '个人', value: '个人' },
+        { label: '公司', value: '公司' }
+      ],
       auditList: {
         CHECK_PENDING: [
           { label: '一审通过', value: 'FIRST_AUDIT_FINISH' },
@@ -138,12 +195,14 @@ export default {
             key: 'themeTitle',
             align: 'center'
           },
-          { title: '来源类型',
+          {
+            title: '来源类型',
             minWidth: 200,
             align: 'center',
             key: 'authorType'
           },
-          { title: '子视频标题',
+          {
+            title: '子视频标题',
             minWidth: 200,
             align: 'center',
             key: 'detailTitle'
@@ -259,11 +318,22 @@ export default {
               )
 
               // 未审核
-              if (params.row.status === 'CHECK_PENDING') {
+              if (
+                (params.row.status === 'CHECK_PENDING' ||
+                  params.row.status === 'TO_BE_EDITED') &&
+                this.hasPromission(
+                  elements.trainingManage.auditLongVideo.sub.audit
+                )
+              ) {
                 return h('div', [btnAudit])
               }
               // 一审通过
-              if (params.row.status === 'FIRST_AUDIT_FINISH') {
+              if (
+                params.row.status === 'FIRST_AUDIT_FINISH' &&
+                this.hasPromission(
+                  elements.trainingManage.auditLongVideo.sub.audit
+                )
+              ) {
                 return h('div', [btnAudit])
               }
               // 二审通过
@@ -271,12 +341,25 @@ export default {
                 return h('div', [btnDetail])
               }
               // 审核不通过
-              if (params.row.status === 'AUDIT_FAILED') {
+              if (
+                params.row.status === 'AUDIT_FAILED' &&
+                this.hasPromission(
+                  elements.trainingManage.auditLongVideo.sub.audit
+                )
+              ) {
                 return h('div', [btnAudit])
               }
               // 已发布
               if (params.row.status === 'PUBLISHED') {
-                return h('div', [btnDown, btnDetail])
+                if (
+                  this.hasPromission(
+                    elements.trainingManage.auditLongVideo.sub.down
+                  )
+                ) {
+                  return h('div', [btnDown, btnDetail])
+                } else {
+                  return h('div', [btnDetail])
+                }
               }
               // 发布失败
               if (params.row.status === 'PUBLISHED_FAILED') {
@@ -290,11 +373,21 @@ export default {
           }
         ]
       },
-      page: { total: 0, current: 1, pageSize: 10, pageSizes: [10, 20, 30, 40, 50] },
+      page: {
+        total: 0,
+        current: 1,
+        pageSize: 10,
+        pageSizes: [10, 20, 30, 40, 50]
+      },
       elements: elements
     }
   },
   methods: {
+    stopPlay (data) {
+      if (data === false) {
+        this.$refs['videoPlayer'].pause()
+      }
+    },
     handlerSearch () {
       this.page.current = 1
       this.search.pageIndex = 1
@@ -317,6 +410,7 @@ export default {
     },
     getData () {
       let params = { ...this.search }
+      params.themeId = this.theme
       if (params.startTime.length !== 0) {
         params.startTime = params.startTime + ' 00:00:00'
       }
@@ -366,7 +460,7 @@ export default {
         title: '下架确认',
         content: `确认下架ID为 ${row.id} 的视频吗?`,
         onOk: () => {
-          downSubVideo({id: row.id}).then(res => {
+          downSubVideo({ id: row.id }).then(res => {
             if (res.code === 1000) {
               this.$Message.success(res.message)
               this.getData()
@@ -376,6 +470,10 @@ export default {
           })
         }
       })
+    },
+    // 倍速播放
+    setPlaySpeed () {
+      this.$refs['videoPlayer'].playbackRate = this.playSpeed || 1
     },
     // 保存
     postAudit () {

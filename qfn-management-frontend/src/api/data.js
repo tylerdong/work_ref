@@ -148,6 +148,38 @@ export const updateManufacture = data =>
 // 返回分页厂家
 export const getManufactureForPage = data =>
   axios.request({url: 'quotation/controller/manufacture/getManufactureForPage', method: 'post', data})
+/**
+ * 新增/编辑企业厂家的部门
+ * @param data
+ * @returns {*}
+ */
+export const modifyManufactureDepartment = data =>
+  axios.request({url: 'quotation/controller/manufacture/modifyManufactureDepartment', method: 'post', data})
+/**
+ * 获取企业部门
+ * @param data
+ * @returns {*}
+ */
+export const getManufactureDepartmentList = data =>
+  axios.request({url: 'quotation/controller/manufacture/getManufactureDepartmentList', method: 'post', data})
+/**
+ * 获取企业类型列表
+ * @returns {*}
+ */
+export const getEnterpriseTypeList = () =>
+  axios.request({url: 'quotation/controller/manufacture/getEnterpriseTypeList', method: 'get'})
+/**
+ * 获取所属行业列表
+ * @returns {*}
+ */
+export const getIndustryNameList = () =>
+  axios.request({url: 'quotation/controller/manufacture/getIndustryNameList', method: 'get'})
+/**
+ * 获取所有的国家
+ * @returns {*}
+ */
+export const getCountryList = () =>
+  axios.request({url: 'quotation/controller/country/getCountryList', method: 'get'})
 // 获取所有省
 export const getAllProvince = () =>
   axios.request({url: 'quotation/controller/areadata/getAllProvince', method: 'get'})
@@ -157,7 +189,12 @@ export const getCity = data =>
 // 获取市下面所有县
 export const getCounty = data =>
   axios.request({url: 'quotation/controller/areadata/getCounty', method: 'post', data})
-
+// 获取县下面的镇
+export const getTown = data =>
+  axios.request({url: 'quotation/controller/areadata/getTown', method: 'post', data})
+// 根据townId获取省，市，区
+export const getAreaInfoByTownId = data =>
+  axios.request({url: 'quotation/controller/areadata/getAreaInfoByTownId', method: 'post', data})
 // 获取数据所有状态
 const getAllDataStatus = () => axios.request({url: 'pretreatment/controller/pretreatmentdictionary/getAllDataStatus', method: 'get'})
 // 获取产品

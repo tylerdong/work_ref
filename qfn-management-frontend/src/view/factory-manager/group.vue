@@ -1,7 +1,7 @@
 <template>
   <div>
     <Form ref="form" :model="search" inline>
-      <FormItem prop="timeSpan" label="创建时间" class="length-20rem">
+      <FormItem prop="timeSpan" label="创建时间" class="length-24rem">
         <DatePicker type="datetimerange" v-model="search.timeSpan" placeholder="请选择创建时间" class="length-18rem" clearable :transfer="true"></DatePicker>
       </FormItem>
       <FormItem prop="name" label="集团名称" class="length-16-8rem">
@@ -45,6 +45,10 @@ export default {
         columns: [
           {title: '编码', key: 'code'},
           {title: '名称', key: 'name'},
+          {title: '集团网址', key: 'name'},
+          {title: '是否上市', key: 'name'},
+          {title: '上市名', key: 'name'},
+          {title: '股票代码', key: 'name'},
           {title: '电话', key: 'tel'},
           {
             title: '创建时间',

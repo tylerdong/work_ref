@@ -137,6 +137,7 @@ export default {
       auditList: {
         CHECK_PENDING: [
           { label: '一审通过', value: 'FIRST_AUDIT_FINISH' },
+          { label: '二审通过', value: 'SECOND_AUDIT_FINISH' },
           { label: '审核不通过', value: 'AUDIT_FAILED' }
         ],
         FIRST_AUDIT_FINISH: [
@@ -195,7 +196,7 @@ export default {
             key: 'is_recommend',
             align: 'center',
             render: (h, { row }) => {
-              if (row.isRecommend.toLowerCase() === 'y') {
+              if (row.isRecommend && row.isRecommend.toLowerCase() === 'y') {
                 return h(
                   'Tag',
                   {
@@ -262,6 +263,24 @@ export default {
                 '详情'
               )
 
+              const btnSubDetail = h(
+                'Button',
+                {
+                  props: {
+                    size: 'small'
+                  },
+                  style: {
+                    marginRight: '5px'
+                  },
+                  on: {
+                    click: () => {
+                      this.swithToSubVideo(params.row.id)
+                    }
+                  }
+                },
+                '子视频'
+              )
+
               const btnDown = h(
                 'Button',
                 {
@@ -281,25 +300,29 @@ export default {
                 '下架'
               )
 
-              // 未审核
-              if (params.row.status === 'CHECK_PENDING') {
+              // 未审核 待编辑
+              if ((params.row.status === 'CHECK_PENDING' || params.row.status === 'TO_BE_EDITED') && this.hasPromission(elements.trainingManage.auditLongVideo.main.audit)) {
                 return h('div', [btnAudit])
               }
               // 一审通过
-              if (params.row.status === 'FIRST_AUDIT_FINISH') {
+              if (params.row.status === 'FIRST_AUDIT_FINISH' && this.hasPromission(elements.trainingManage.auditLongVideo.main.audit)) {
                 return h('div', [btnAudit])
               }
               // 二审通过
               if (params.row.status === 'SECOND_AUDIT_FINISH') {
-                return h('div', [btnDetail])
+                return h('div', [btnDetail, btnSubDetail])
               }
               // 审核不通过
-              if (params.row.status === 'AUDIT_FAILED') {
+              if (params.row.status === 'AUDIT_FAILED' && this.hasPromission(elements.trainingManage.auditLongVideo.main.audit)) {
                 return h('div', [btnAudit])
               }
               // 已发布
               if (params.row.status === 'PUBLISHED') {
-                return h('div', [btnDown, btnDetail])
+                if (this.hasPromission(elements.trainingManage.auditLongVideo.main.down)) {
+                  return h('div', [btnDown, btnDetail])
+                } else {
+                  return h('div', [btnDetail])
+                }
               }
               // 发布失败
               if (params.row.status === 'PUBLISHED_FAILED') {
@@ -357,6 +380,9 @@ export default {
         this.page.total = res.data.count
         this.page.current = res.data.pageIndex
       })
+    },
+    swithToSubVideo (data) {
+      this.$emit('currentTab', data)
     },
     // 显示审核弹窗
     showAuditModal (id) {

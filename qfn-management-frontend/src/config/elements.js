@@ -2,7 +2,7 @@
  * @Author: dongweiliang@gmail.com
  * @Date: 2019-02-13 10:14:20
  * @LastEditors: dongweiliang@gmail.com
- * @LastEditTime: 2019-02-13 10:39:44
+ * @LastEditTime: 2019-03-04 13:27:22
  * @Description: file content
  */
 export default {
@@ -34,7 +34,8 @@ export default {
       },
       factory: {
         create: 'dictionary:factoryManager:factory:create',
-        edit: 'dictionary:factoryManager:factory:edit'
+        edit: 'dictionary:factoryManager:factory:edit',
+        department: 'dictionary:factoryManager:factory:department'
       }
     },
     marketWeight: {
@@ -91,8 +92,17 @@ export default {
       }
     }
   },
+  shortVideo: {
+    audit: 'shortVideo.audit',
+    down: 'shortVideo.down',
+    release: 'shortVideo.release'
+  },
   // 培训管理
   trainingManage: {
+    recruitment: {
+      audit: 'trainingManage.recruitment.audit',
+      down: 'trainingManage.recruitment.down'
+    },
     longVideo: {
       main: {
         add: 'trainingManage.longVideo.main.add',
@@ -105,6 +115,39 @@ export default {
         edit: 'trainingManage.longVideo.sub.edit',
         view: 'trainingManage.longVideo.sub.view'
       }
+    },
+    // 审核长视频
+    auditLongVideo: {
+      main: {
+        audit: 'trainingManage.longVideoAudit.main.audit',
+        down: 'trainingManage.longVideoAudit.main.down'
+      },
+      sub: {
+        audit: 'trainingManage.longVideoAudit.sub.audit',
+        down: 'trainingManage.longVideoAudit.sub.down'
+      }
+    }
+  },
+  // 学院管理
+  academyManage: {
+    // 添加音频
+    audio: {
+      // TODO
+    },
+    // 音频审核
+    audioAudit: {
+      audit: 'academyManage.audioAudit.audit',
+      down: 'academyManage.audioAudit.down'
+    },
+    // 添加报告
+    report: {
+      add: 'academyManage.report.add',
+      edit: 'academyManage.report.edit'
+    },
+    // 报告审核
+    reportAudit: {
+      audit: 'academyManage.reportAudit.audit',
+      down: 'academyManage.reportAudit.down'
     }
   }
 }

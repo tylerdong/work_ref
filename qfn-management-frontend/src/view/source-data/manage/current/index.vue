@@ -44,6 +44,10 @@
             :key="index"
           >{{ item }}</Option>
         </Select>
+        来源
+        <Select v-model="search.source" placeholder="请选择来源" transfer=transfer clearable style="width:150px" class="length-230 m-r-10">
+          <Option v-for="(item, index) in option.source" :value="item.key" :key="index">{{ item.value }}</Option>
+        </Select>
         <Input
           v-model="search.spec"
           placeholder="请输入规格..."
@@ -82,6 +86,7 @@
 
 <script>
 import api from '@/api/data'
+import dataManager from '@/api/dataManager'
 import dateFns from 'date-fns'
 import {configurations} from '@/config/option'
 import _ from 'lodash'
@@ -91,10 +96,10 @@ export default {
       priceType: '出厂价',
       productType: {},
       searchLoading: true,
-      search: { startTime: '', endTime: '', startPriceDate: '', endPriceDate: '', productClassName: '', spec: '', order: '' },
+      search: { startTime: '', endTime: '', source: '', startPriceDate: '', endPriceDate: '', productClassName: '', spec: '', order: '' },
       page: { total: 0, current: 1, pageSize: 20, pageSizes: [20, 30, 40, 50] },
       products: [],
-      option: {status: []},
+      option: {status: [], source: [{key: 'ETL', value: '爬虫'}]},
       table: {
         data: [],
         columns: []
@@ -121,22 +126,38 @@ export default {
     })
   },
   methods: {
+    getWeightConfigList () {
+      return new Promise((resolve, reject) => {
+        dataManager.getWeightConfigOptions().then(res => {
+          if (res.code === 1000) {
+            this.option.source = this.option.source.concat(res.data[0].utilsVoList)
+            resolve(res.data)
+          }
+        }).catch(err => {
+          reject(err)
+        })
+      })
+    },
     clearSearch () {
       this.search.startTime = ''
       this.search.endTime = ''
       this.search.productClassName = ''
       this.search.spec = ''
+      this.search.source = ''
     },
     getStatus (queryData) {
-      api.getAllDataStatus().then(response => {
-        if (response.code === 1000) {
-          let data = response.data
-          if (data && Array.isArray(data) && data.length > 0) {
-            this.option.status = data
-          } else {
-            this.option.status = []
+      return new Promise((resolve, reject) => {
+        api.getAllDataStatus().then(response => {
+          if (response.code === 1000) {
+            let data = response.data
+            if (data && Array.isArray(data) && data.length > 0) {
+              this.option.status = data
+            } else {
+              this.option.status = []
+            }
+            resolve(data)
           }
-        }
+        })
       })
     },
     priceChange (value) {
@@ -157,7 +178,8 @@ export default {
         spec: this.search.spec,
         productClassCode: this.code,
         priceType: this.priceType,
-        order: this.search.order
+        order: this.search.order,
+        source: this.search.source
       }
       this.searchLoading = true
       api.getAllPreManufactureInfoForPage(query).then(response => {
@@ -219,7 +241,7 @@ export default {
       this.search.endTime = dateFns.format((new Date()), 'YYYY-MM-DD')
     },
     setColumns () {
-      let array = [];
+      let array = []
       if (this.priceType === '市场价') {
         array = [ ..._.cloneDeep(this.productType.columns2), { title: '创建时间', width: 200, key: 'gmtCreate', align: 'center', render: (h, params) => { return h('span', dateFns.format(params.row.gmtCreate, 'YYYY-MM-DD HH:mm')) } } ]
       } else {
@@ -227,12 +249,11 @@ export default {
       }
       let priceDateCol = array.find(item => item.key === 'priceDate')
       this.$set(priceDateCol, 'sortable', true)
-      this.table.columns = array;
+      this.table.columns = array
     }
   },
   mounted () {
-    this.getStatus(true)
-    this.getProductsData().then(res => {
+    Promise.all([this.getWeightConfigList(), this.getStatus(true), this.getProductsData()]).then(res => {
       this.getData()
     })
   }

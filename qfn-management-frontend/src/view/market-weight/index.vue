@@ -280,7 +280,7 @@ export default {
                 const that = this
                 return h('Radio', {
                   props: {
-                    value: that.feedbackData.showSalesAreaClass === params.row.key
+                    value: +that.feedbackData.showSalesAreaClass === +params.row.key
                   },
                   on: {
                     'on-change': function () {
@@ -297,7 +297,7 @@ export default {
                 const that = this
                 return h('Radio', {
                   props: {
-                    value: that.feedbackData.collectSalesAreaClass === params.row.key
+                    value: +that.feedbackData.collectSalesAreaClass === +params.row.key
                   },
                   on: {
                     'on-change': function () {
@@ -421,6 +421,7 @@ export default {
               cnPriceFloor: 0,
               usaPriceCeiling: 0,
               usaPriceFloor: 0,
+              productCategoryId: this.currentId,
               'collectSalesAreaClass': 0,
               'details': [],
               'propList': [],
@@ -493,8 +494,9 @@ export default {
         })
         return false
       }
-
-      if (this.feedbackData.cnPriceCeiling > this.feedbackData.cnPriceFloor) {
+      // console.log('this.feedbackData.cnPriceCeiling', this.feedbackData.cnPriceCeiling, +this.feedbackData.cnPriceCeiling)
+      // console.log('this.feedbackData.cnPriceFloor', this.feedbackData.cnPriceFloor, +this.feedbackData.cnPriceFloor)
+      if (+this.feedbackData.cnPriceCeiling > +this.feedbackData.cnPriceFloor) {
         this.$Message.error({
           content: 'RMB价格下限比上限大有错误！',
           duration: 3
@@ -502,7 +504,7 @@ export default {
         return false
       }
 
-      if (this.feedbackData.usaPriceCeiling > this.feedbackData.usaPriceFloor) {
+      if (+this.feedbackData.usaPriceCeiling > +this.feedbackData.usaPriceFloor) {
         this.$Message.error({
           content: '美元价格下限比上限大有错误！',
           duration: 3

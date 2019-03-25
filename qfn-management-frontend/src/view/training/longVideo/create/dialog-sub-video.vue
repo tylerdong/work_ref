@@ -1,12 +1,18 @@
 <template>
-  <Modal v-model="modal.show" :title="modal.title" :draggable="true" @on-ok="confirm" :loading="loading.modal">
+  <Modal v-model="modal.show"
+         :title="modal.title"
+         :draggable="true"
+         @on-ok="confirm"
+         :loading="loading.modal"
+         @on-visible-change="stopPlay"
+         :mask-closable="false">
     <div class="video-div scrolled-modal">
       <table>
         <tbody>
           <template v-for="(item, key) in videoData">
             <tr :key="key">
               <td>
-                <video class="video-in-dialog" :src="item.videoFdfsUrl" controls></video>
+                <video class="video-in-dialog" :src="item.videoFdfsUrl" ref="videoPlayer" controls></video>
               </td>
               <td>
                 <ul>
@@ -44,6 +50,11 @@ export default {
     },
     confirm () {
       this.modal.show = false
+    },
+    stopPlay (data) {
+      if (data === false) {
+        this.$refs['videoPlayer'].pause()
+      }
     }
   }
 }
@@ -56,7 +67,7 @@ export default {
     td {
       text-align: center;
       ul {
-        margin: 10px auto;
+        margin: 10px 0 0 10px;
       }
     }
     td:nth-child(1) {

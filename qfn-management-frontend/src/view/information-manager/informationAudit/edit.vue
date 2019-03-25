@@ -3,9 +3,23 @@
     <Card shadow>
       <p slot="title">文章审核</p>
       <div class="mb-20 clearfix">
-        <Form :model="form" :rules="rules" ref="form" label-position="right" :label-width="100" class="form">
+        <Form :model="form" :rules="rules" ref="form" label-position="right" :label-width="180" class="form">
           <FormItem label="审核不通过备注">
             {{form.examineComment}}
+          </FormItem>
+          <FormItem label="文章封面">
+            <div class="fl upload-div">
+              <Upload :action="uploadAction"
+                      :on-success="uploadSuccess"
+                      :on-error="uploadError"
+                      :on-format-error="formatError"
+                      :show-upload-list="false"
+                      :format="['psd','jpeg', 'jpg','png','gif','webp','tiff','bmp']"
+                      :max-size="51200">
+                <Button icon="ios-cloud-upload-outline" type="primary">上传</Button>
+              </Upload>
+              <img class="img-in-dialog clear" :src="form.coverFdfsUrl" alt="封面">
+            </div>
           </FormItem>
           <FormItem label="文章标题" prop="title">
             <Input v-model="form.title" placeholder="请输入文章标题"/>
@@ -26,7 +40,7 @@
           </div>
           <div class="clearfix">
             <FormItem label="敏感词提示" class="item">
-              <span class="alive" v-for="(word, index) in aliveWord.split(',')" :key="index">{{word}}</span>
+              <span class="alive" v-if="aliveWord" v-for="(word, index) in aliveWord.split(',')" :key="index">{{word}}</span>
             </FormItem>
             <FormItem class="fr">
               <Button type="primary" @click="checkWord" size="small" :loading="loading.check">敏感词识别</Button>
@@ -67,8 +81,10 @@ export default {
   data () {
     return {
       option: {types: []},
+      uploadAction: '',
       form: {
         id: '',
+        coverFdfsUrl: '',
         title: '',
         content: '',
         gmtModified: '',
@@ -94,6 +110,10 @@ export default {
   created () {
     this.getData()
   },
+  mounted () {
+    let baseUrl = this.getCurrentBaseUrl()
+    this.uploadAction = `${baseUrl}pretreatment/controller/themevideo/upload`
+  },
   methods: {
     getData () {
       Promise.all([api.information.getAllArticleType()]).then(res => {
@@ -114,6 +134,7 @@ export default {
           let data = res.data
           this.form.id = data.id
           this.form.title = data.title
+          this.form.coverFdfsUrl = data.coverFdfsUrl
           this.$refs.content.setHtml(data.content)
           this.form.content = data.content
           this.form.gmtModified = data.gmtModified
@@ -124,7 +145,7 @@ export default {
           this.form.summary = data.summary
           this.form.examineComment = data.examineComment
           this.form.type = this.option.types.find(item => item.key === data.type.toString()).content
-          this.form.company = data.company
+          this.form.company = data.company ? data.company : ''
           this.form.status = data.status
           this.form.remark = data.remark
         }
@@ -229,6 +250,17 @@ export default {
       }).finally(() => {
         this.loading.confirm = false
       })
+    },
+    // 上传文件
+    uploadSuccess (res) {
+      this.form.coverFdfsUrl = res.data
+      this.$Message.success('上传成功')
+    },
+    uploadError (e, file) {
+      this.$Message.error(file.message)
+    },
+    formatError () {
+      this.$Message.error('文件格式不正确')
     }
   }
 }

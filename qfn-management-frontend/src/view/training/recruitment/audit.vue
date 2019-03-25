@@ -2,7 +2,8 @@
   <div class="addInformation">
     <Card shadow>
       <p slot="title">招聘信息审核</p>
-      <div class="mb-20 clearfix">更新时间：
+      <div class="mb-20 clearfix">
+        更新时间：
         <DatePicker
           :value="[search.startTime,search.endTime]"
           format="yyyy-MM-dd"
@@ -26,15 +27,14 @@
           <Option v-for="item in sourceList" :value="item.value" :key="item.value">{{ item.key }}</Option>
         </Select>岗位名称搜索：
         <Input type="text" v-model="search.jobVacancy" style="width:220px;margin-right:10px;"></Input>
-        <Button @click="handlerSearch" class="getData-btn" type="primary" :loading="loading">搜索</Button>
+        <Button
+          @click="handlerSearch"
+          class="getData-btn"
+          type="primary"
+          :loading="loading.search"
+        >搜索</Button>
       </div>
-      <Table
-        :loading="loading"
-        ref="selection"
-        :data="table.data"
-        :columns="table.columns"
-        class="table-bottom-20"
-      ></Table>
+      <Table ref="selection" :data="table.data" :columns="table.columns" class="table-bottom-20"></Table>
       <Page
         class="page-bottom-1"
         @on-change="pageChange"
@@ -48,7 +48,15 @@
       />
     </Card>
 
-    <Modal v-model="modals.audit.isShow" width="800" :loading="modals.audit.loading" :title="modals.audit.title" @on-ok="postAudit">
+    <Modal
+      v-model="modals.audit.isShow"
+      class="audit-box"
+      width="800"
+      :fullscreen="true"
+      :loading="modals.audit.loading"
+      :title="modals.audit.title"
+      @on-ok="postAudit"
+    >
       <Form
         class="n-table"
         ref="auditForm"
@@ -56,40 +64,97 @@
         :rules="modals.audit.rules"
         :label-width="120"
       >
-        <FormItem label="ID">{{modals.audit.data.id}}</FormItem>
-        <FormItem label="招聘岗位名称">{{modals.audit.data.jobVacancy}}</FormItem>
-        <FormItem label="公司名称">{{modals.audit.data.facturer}}</FormItem>
-        <FormItem label="公司简介">{{modals.audit.data.companyProfile}}</FormItem>
-        <FormItem label="工资范围">{{modals.audit.data.salary}}</FormItem>
-        <FormItem label="招聘联系电话">{{modals.audit.data.facturerTel}}</FormItem>
-        <FormItem label="学历要求">{{modals.audit.data.education}}</FormItem>
-        <FormItem label="经验要求">{{modals.audit.data.workExperience}}</FormItem>
-        <FormItem label="福利待遇">{{modals.audit.data.welfare}}</FormItem>
-        <FormItem label="需求类型">{{modals.audit.data.demandType}}</FormItem>
-        <FormItem label="招聘数量">{{modals.audit.data.recruitsPeople}}</FormItem>
-        <FormItem label="职位类型">{{modals.audit.data.jobType}}</FormItem>
-        <FormItem label="发布时间">{{modals.audit.data.publishDate}}</FormItem>
-        <FormItem label="有效日期">{{modals.audit.data.effectiveDate}}</FormItem>
-        <FormItem label="描述"><div v-html="modals.audit.data.responsibilities"></div></FormItem>
-        <FormItem label="工作具体地址">{{modals.audit.data.jobAddr}}</FormItem>
-        <FormItem label="工作地址经纬度">{{modals.audit.data.jobAddrMap}}</FormItem>
-        <FormItem v-if="modals.audit.data.auditRemark" label="审核备注">{{modals.audit.data.auditRemark}}</FormItem>
+        <ul class="form-list no-bottom-li clearfix">
+          <li class="col-2"><FormItem label="ID">{{modals.audit.data.id}}</FormItem></li>
+          <li class="col-2"><FormItem label="招聘岗位名称">{{modals.audit.data.jobVacancy}}</FormItem></li>
+          <li class="col-2"><FormItem label="公司名称">{{modals.audit.data.facturer}}</FormItem></li>
+          <li class="col-2"><FormItem label="公司简介">{{modals.audit.data.companyProfile}}</FormItem></li>
+          <li class="col-2"><FormItem label="工资范围">{{modals.audit.data.salary}}</FormItem></li>
+          <li class="col-2"><FormItem label="招聘联系电话">{{modals.audit.data.facturerTel}}</FormItem></li>
+          <li class="col-2"><FormItem label="学历要求">{{modals.audit.data.education}}</FormItem></li>
+          <li class="col-2"><FormItem label="经验要求">{{modals.audit.data.workExperience}}</FormItem></li>
+          <li class="col-2"><FormItem label="福利待遇">{{modals.audit.data.welfare}}</FormItem></li>
+          <li class="col-2"><FormItem label="招聘数量">{{modals.audit.data.recruitsPeople}}</FormItem></li>
+          <li class="col-2"><FormItem label="职位类型">{{modals.audit.data.jobType}}</FormItem></li>
+          <li class="col-2"><FormItem label="发布时间">{{modals.audit.data.publishDate}}</FormItem></li>
+          <li class="col-2"><FormItem label="有效日期">{{modals.audit.data.effectiveDate}}</FormItem></li>
+          <li class="col-2"><FormItem label="工作地址经纬度">{{modals.audit.data.jobAddrMap}}</FormItem></li>
+          <li class="col-2"><FormItem
+            v-if="modals.audit.data.auditRemark"
+            label="审核备注"
+          >{{modals.audit.data.auditRemark}}</FormItem></li>
+        </ul>
+        <FormItem label="描述">
+            <div v-html="modals.audit.data.responsibilities"></div>
+          </FormItem>
         <FormItem label="是否急聘">
-          <Checkbox v-if="modals.audit.type==='audit'" v-model="modals.audit.postData.demandType" true-value="Y" false-value="N"></Checkbox>
+          <Checkbox
+            v-if="modals.audit.type==='audit'"
+            v-model="modals.audit.postData.demandType"
+            true-value="Y"
+            false-value="N"
+          ></Checkbox>
           <span v-else>{{modals.audit.data.demandType | booleanValue}}</span>
         </FormItem>
-        <FormItem prop="jobAddrArea" label="工作地点" style="margin-bottom: 20px;">
-          <Select v-if="modals.audit.type==='audit'" v-model="modals.audit.postData.jobAddrArea" style="width:150px" filterable>
-            <Option v-for="item in cities" :value="item" :key="item">{{ item }}</Option>
-          </Select>
-          <span style="margin-left:10px"><span v-if="modals.audit.type==='audit'">爬取原地址：</span>{{modals.audit.data.jobAddrArea}}</span>
+        <FormItem class="mb-10" prop="facturer" label="企业名称">
+
+              <Select
+                v-model="modals.audit.postData.manufacturerId"
+                filterable
+                remote
+                :label-in-value="true"
+                :remote-method="getManufacturing"
+                class="length-22rem mr-20"
+                @on-change="manufacturerChange"
+                :loading="loading.facturer"
+              >
+                <Option
+                  v-for="(item, index) in option.facturer"
+                  :value="item.value"
+                  :key="index"
+                >{{item.label}}</Option>
+              </Select>
+              <span v-if="modals.audit.type==='audit'">{{modals.audit.data.sourceFacturer}}</span>
+
         </FormItem>
-        <FormItem prop="auditRemark" v-if="modals.audit.type==='audit'" label="审核备注" style="margin-bottom: 20px;">
+        <FormItem class="mb-10" prop="jobAddrArea" label="工作地点">
+          <Row>
+            <Col span="16">{{modals.audit.postData.jobAddrArea}}</Col>
+            <Col span="8">
+              <span v-if="modals.audit.type==='audit'">{{modals.audit.data.jobAddrArea}}</span>
+            </Col>
+          </Row>
+        </FormItem>
+        <FormItem class="mb-10" label="工作具体地址" prop="jobAddr">
+          <Input v-model="modals.audit.postData.jobAddr" class="length-22rem"/>
+        </FormItem>
+        <FormItem class="mb-10" label="月薪范围" prop="exceptedSalary">
+          <Select v-model="modals.audit.postData.exceptedSalary" clearable class="length-22rem mr-20">
+            <Option
+              v-for="(item, index) in option.salary"
+              :value="item.showexceptSlaryName"
+              :key="index"
+            >{{item.exceptSlaryName}}</Option>
+          </Select> <span>{{modals.audit.data.salary}}</span>
+        </FormItem>
+        <FormItem
+          class="mb-10"
+          prop="auditRemark"
+          v-if="modals.audit.type==='audit'"
+          label="审核备注"
+          style="margin-bottom: 20px;"
+        >
           <Input v-model="modals.audit.postData.auditRemark" type="textarea" placeholder="备注"/>
         </FormItem>
-        <FormItem prop="status" v-if="modals.audit.type==='audit'" label="审核结果">
-          <Select v-model="modals.audit.postData.status" style="width:200px" filterable>
-            <Option v-for="item in auditList[modals.audit.data.status]" :value="item.value" :key="item.value">{{ item.label }}</Option>
+        <FormItem class="mb-10" prop="status" v-if="modals.audit.type==='audit'" label="审核结果">
+          <Select v-model="modals.audit.postData.status" class="length-22rem" filterable>
+            <Option
+              v-for="item in auditList[modals.audit.data.status]"
+              :value="item.value"
+              :key="item.value"
+            >
+              {{item.label }}
+            </Option>
           </Select>
         </FormItem>
       </Form>
@@ -101,13 +166,16 @@ import {
   getRecruitmentList,
   getRecruitmentSourceList,
   getRecruitmentStatusList,
-  getAllCity,
   getRecruitmentById,
   postPreRecruitment,
-  postDownRecruitment
+  postDownRecruitment,
+  getMatchManufacturerByName,
+  getExceptSlaryList,
+  getManufacturerById
 } from '@/api/training'
 import elements from '@/config/elements'
 import dateFns from 'date-fns'
+
 export default {
   data () {
     return {
@@ -118,7 +186,8 @@ export default {
         pageIndex: 1,
         pageCount: 10
       },
-      loading: true,
+      loading: { search: false, facturer: false },
+      option: { facturer: [], salary: [] },
       modals: {
         audit: {
           type: 'audit',
@@ -127,14 +196,28 @@ export default {
           title: '审核',
           data: {},
           rules: {
-            jobAddrArea: [{ required: true, message: '为必填项', trigger: 'blur' }],
-            status: [{ required: true, message: '为必填项', trigger: 'blur' }]
+            jobAddr: [
+              { required: true, message: '具体地址为必填项', trigger: 'blur' }
+            ],
+            exceptedSalary: [
+              { required: true, message: '月薪范围为必填项', trigger: 'blur' }
+            ],
+            status: [
+              { required: true, message: '状态为必填项', trigger: 'blur' }
+            ],
+            auditRemark: [
+              { required: true, message: '备注为必填项', trigger: 'blur' }
+            ]
           },
           postData: {
             id: null,
             status: '',
             auditRemark: '',
+            manufacturerId: '',
             jobAddrArea: '',
+            jobAddrAreaCode: '',
+            jobAddr: '',
+            exceptedSalary: '',
             demandType: 'N'
           }
         }
@@ -143,8 +226,15 @@ export default {
       statusList: [],
       sourceList: [],
       auditList: {
-        '1': [{'value': '3', label: '一审通过'}, {'value': '5', label: '审核不通过'}],
-        '3': [{'value': '4', label: '二审通过'}, {'value': '5', label: '审核不通过'}]
+        '1': [
+          { value: '3', label: '一审通过' },
+          { value: '4', label: '二审通过' },
+          { value: '5', label: '审核不通过' }
+        ],
+        '3': [
+          { value: '4', label: '二审通过' },
+          { value: '5', label: '审核不通过' }
+        ]
       },
       table: {
         data: [],
@@ -153,10 +243,11 @@ export default {
           {
             title: '岗位名称',
             minWidth: 200,
-            key: 'jobVacancy',
+            key: 'jobType',
             align: 'center'
           },
-          { title: '信息来源',
+          {
+            title: '信息来源',
             minWidth: 200,
             align: 'center',
             render: (h, params) => {
@@ -258,11 +349,17 @@ export default {
               )
 
               // 未审核
-              if (params.row.status === '1') {
+              if (
+                params.row.status === '1' &&
+                this.hasPromission(elements.trainingManage.recruitment.audit)
+              ) {
                 return h('div', [btnAudit])
               }
               // 一审通过
-              if (params.row.status === '3') {
+              if (
+                params.row.status === '3' &&
+                this.hasPromission(elements.trainingManage.recruitment.audit)
+              ) {
                 return h('div', [btnAudit])
               }
               // 二审通过
@@ -275,13 +372,24 @@ export default {
               }
               // 已上架
               if (params.row.status === '6') {
-                return h('div', [btnDown, btnDetail])
+                if (
+                  this.hasPromission(elements.trainingManage.recruitment.down)
+                ) {
+                  return h('div', [btnDown, btnDetail])
+                } else {
+                  return h('div', [btnDetail])
+                }
               }
             }
           }
         ]
       },
-      page: { total: 0, current: 1, pageSize: 10, pageSizes: [10, 20, 30, 40, 50] },
+      page: {
+        total: 0,
+        current: 1,
+        pageSize: 10,
+        pageSizes: [10, 20, 30, 40, 50]
+      },
       elements: elements
     }
   },
@@ -306,15 +414,46 @@ export default {
       this.search.startTime = dataArr[0]
       this.search.endTime = dataArr[1]
     },
-    getData () {
-      let params = { ...this.search }
-
-      getRecruitmentList(params).then(res => {
-        this.loading = false
-        this.table.data = res.data.list
-        this.page.total = res.data.count
-        this.page.current = res.data.pageIndex
+    getManufacturing (query) {
+      if (query !== '') {
+        this.loading.facturer = true
+        getMatchManufacturerByName({ matchName: query })
+          .then(res => {
+            const list = res.data.map(i => {
+              return { value: i.manufacturerId, label: i.matchName }
+            })
+            this.option.facturer = list.filter(
+              item => item.label.toLowerCase().indexOf(query.toLowerCase()) > -1
+            )
+          })
+          .finally(() => {
+            this.loading.facturer = false
+          })
+      } else {
+        this.option.facturer = []
+      }
+    },
+    manufacturerChange (val) {
+      this.modals.audit.postData.jobAddrArea = ''
+      this.modals.audit.postData.jobAddrAreaCode = ''
+      getManufacturerById({ manufacturerId: val.value }).then(res => {
+        let data = res.data
+        this.modals.audit.postData.jobAddrArea = data.jobAddrArea
+        this.modals.audit.postData.jobAddrAreaCode = data.jobAddrAreaCode
       })
+    },
+    getData () {
+      this.loading.search = true
+      let params = { ...this.search }
+      getRecruitmentList(params)
+        .then(res => {
+          this.table.data = res.data.list
+          this.page.total = res.data.count
+          this.page.current = res.data.pageIndex
+        })
+        .finally(() => {
+          this.loading.search = false
+        })
     },
     // 显示审核弹窗
     showAuditModal (id) {
@@ -326,14 +465,22 @@ export default {
         id: null,
         status: '',
         auditRemark: '',
-        jobAddrArea: ''}
+        manufacturerId: '',
+        jobAddrArea: '',
+        jobAddrAreaCode: '',
+        jobAddr: '',
+        exceptedSalary: '',
+        demandType: 'N'
+      }
       getRecruitmentById({ id: id }).then(res => {
         if (res.code === 1000) {
           const data = JSON.parse(JSON.stringify(res.data))
           this.modals.audit.data = data
+          this.modals.audit.data.sourceFacturer = data.facturer
           this.modals.audit.postData.jobAddrArea = data.jobAddrArea
           this.modals.audit.postData.auditRemark = data.auditRemark
           this.modals.audit.postData.demandType = data.demandType
+          this.modals.audit.postData.jobAddr = data.jobAddr
         }
       })
     },
@@ -354,7 +501,7 @@ export default {
         title: '下架确认',
         content: `确认下架ID为 ${row.id} 的招聘吗`,
         onOk: () => {
-          postDownRecruitment({id: row.id}).then(res => {
+          postDownRecruitment({ id: row.id }).then(res => {
             if (res.code === 1000) {
               this.$Message.success(res.message)
               this.getData()
@@ -376,7 +523,7 @@ export default {
             })
             return false
           }
-          console.log(this.modals.audit.postData)
+          console.log(this.modals.audit.data)
           this.modals.audit.postData.id = this.modals.audit.data.id
           postPreRecruitment(this.modals.audit.postData).then(res => {
             if (res.code === 1000) {
@@ -401,11 +548,11 @@ export default {
     Promise.all([
       getRecruitmentSourceList(),
       getRecruitmentStatusList(),
-      getAllCity()
+      getExceptSlaryList()
     ]).then(res => {
       this.sourceList = res[0].data
       this.statusList = res[1].data
-      this.cities = res[2].data
+      this.option.salary = res[2].data
       this.getData()
     })
   }
@@ -415,7 +562,39 @@ export default {
 .n-table {
   .ivu-form-item {
     margin-bottom: 0;
-
+  }
+  .mb-10 {
+    margin-bottom: 10px;
+  }
+}
+.audit-box {
+}
+.ivu-form-item-content {
+  img {
+    max-width: 100%;
+  }
+}
+.form-list {
+  .col-2 {
+    list-style: none;
+    width: 400px;
+    float: left;
+    margin-bottom: 20px;
+  }
+  .col-100 {
+    list-style: none;
+    width: 100%;
+    margin-bottom: 20px;
+  }
+}
+.no-bottom-li {
+  .col-2 {
+    margin-bottom: 0;
+  }
+}
+ul {
+  li {
+    list-style: none;
   }
 }
 </style>

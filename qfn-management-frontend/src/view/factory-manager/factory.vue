@@ -1,7 +1,7 @@
 <template>
   <div>
     <Form ref="form" :model="search" inline>
-      <FormItem prop="timeSpan" label="创建时间" class="length-20rem">
+      <FormItem prop="timeSpan" label="创建时间" class="length-24rem">
         <DatePicker type="datetimerange" v-model="search.timeSpan" placeholder="请选择创建时间" class="length-18rem" clearable
                     :transfer="true"></DatePicker>
       </FormItem>
@@ -20,7 +20,7 @@
         <Input v-model="search.matchName" placeholder="请输入企业别名" class="length-10rem" clearable/>
       </FormItem>
       <FormItem>
-        <Button type="primary" @click="getDate">查询</Button>
+        <Button type="primary" @click="getData">查询</Button>
       </FormItem>
       <FormItem>
         <Button type="primary" @click="btnAdd" v-check-promission="elements.dictionary.factoryManager.factory.create">添加厂家</Button>
@@ -37,27 +37,31 @@
           show-sizer
           show-total/>
     <dialog-factory ref="factory"
-                    @confirmSuccess="getDate"
+                    @confirmSuccess="getData"
+                    :enterpriseType="option.enterpriseType"
                     :area="option.area"
                     :category="option.category"
-                    :group="option.group"></dialog-factory>
+                    :group="option.group"
+                    :industry="option.industry"></dialog-factory>
+    <dialog-department ref="department" @confirmSuccess="getData"></dialog-department>
   </div>
 </template>
 
 <script>
-import {getManufactureForPage, getCategoryTree, getAreaData, getManufactureGroupForPage} from './../../api/data'
+import api from './../../api'
 import dateFns from 'date-fns'
 import elements from '@/config/elements'
 
 export default {
   components: {
-    'dialog-factory': require('./dialog-factory').default
+    'dialog-factory': require('./dialog-factory').default,
+    'dialog-department': require('./dialog-department').default
   },
   data () {
     return {
       elements: elements,
       search: {timeSpan: '', groupId: '', name: '', matchName: '', fullName: ''},
-      option: {area: [], category: [], group: []},
+      option: {area: [], category: [], group: [], enterpriseType: [], industry: []},
       table: {
         data: [],
         columns: [
@@ -69,11 +73,12 @@ export default {
           {
             title: '公司地址',
             minWidth: 400,
-            render: (h, params) => {
-              return h('span', `${params.row.hasOwnProperty('provinceName') ? params.row.provinceName : ''}
-              ${params.row.hasOwnProperty('cityName') ? params.row.cityName : ''}
-              ${params.row.hasOwnProperty('countyName') ? params.row.countyName : ''}
-              ${params.row.hasOwnProperty('addr') ? params.row.addr : ''}`)
+            render: (h, {row}) => {
+              return h('span', `${row.hasOwnProperty('provinceName') ? row.provinceName : ''}
+              ${row.hasOwnProperty('cityName') ? row.cityName : ''}
+              ${row.hasOwnProperty('countyName') ? row.countyName : ''}
+              ${row.hasOwnProperty('townName') ? row.townName : ''}
+              ${row.hasOwnProperty('addr') ? row.addr : ''}`)
             }
           },
           {title: '电话', key: 'tel', minWidth: 150},
@@ -89,7 +94,7 @@ export default {
           {
             title: '操作',
             align: 'center',
-            minWidth: 90,
+            minWidth: 140,
             fixed: 'right',
             render: (h, params) => {
               const editBtn = h('Button', {
@@ -100,35 +105,25 @@ export default {
                   }
                 }
               }, '编辑')
+              const depBtn = h('Button', {
+                props: {type: 'primary', size: 'small'},
+                on: {
+                  click: () => {
+                    this.btnDepartment(params.row)
+                  }
+                }
+              }, '部门')
 
               let btns = []
 
               if (this.hasPromission(elements.dictionary.factoryManager.factory.edit)) {
                 btns.push(editBtn)
               }
+              if (this.hasPromission(elements.dictionary.factoryManager.factory.department)) {
+                btns.push(depBtn)
+              }
 
-              return h('div',
-                {class: {'table-div-btn': true}},
-                btns
-                //   ,
-                // h('Button', {props: {type: 'error', size: 'small', class: 'table-button'}},
-                //   [h('Poptip', {
-                //     props: {
-                //       confirm: true,
-                //       transfer: true,
-                //       placement: 'left-end',
-                //       title: '确定要删除吗！',
-                //       type: 'error',
-                //       size: 'small',
-                //       minWidth: '200'
-                //     },
-                //     on: {
-                //       'on-ok': () => {
-                //         this.btnDelete(params.row.id)
-                //       }
-                //     }
-                //   }, '删除')])
-              )
+              return h('div', {class: {'table-div-btn': true}}, btns)
             }
           }
         ]
@@ -138,10 +133,22 @@ export default {
     }
   },
   mounted () {
-    this.getDate()
-    this.getCategoryTree()
-    this.getAreaData()
-    this.getGroup()
+    this.getData()
+    let params = {expand: false}
+    let data = {endTime: '', name: '', pageCount: 10000000, pageIndex: 1, startTime: ''}
+    Promise.all([api.data.getCategoryTree(params),
+      api.data.getAreaData(params),
+      api.data.getManufactureGroupForPage(data),
+      api.data.getEnterpriseTypeList(),
+      api.data.getIndustryNameList()]).then(res => {
+      this.option.category = res[0].data
+      this.option.area = res[1].data
+      this.option.group = res[2].data.list
+      this.option.enterpriseType = res[3].data
+      this.option.industry = res[4].data
+    }).catch(e => {
+      this.$Message.error(e.message)
+    })
   },
   methods: {
     btnAdd () {
@@ -150,30 +157,8 @@ export default {
     btnEdit (data) {
       this.$refs.factory.show(data)
     },
-    btnDelete (data) {
-      this.getDate()
-    },
-    // 品类
-    getCategoryTree () {
-      getCategoryTree({expand: false}).then(response => {
-        if (response.data && response.data.length > 0) {
-          this.option.category = [...response.data]
-        } else {
-          this.option.category = []
-        }
-      })
-    },
-    // 销售区域
-    getAreaData () {
-      getAreaData({expand: false}).then(response => {
-        if (response.code === 1000) {
-          if (response.data && response.data && response.data.length > 0) {
-            this.option.area = response.data
-          } else {
-            this.option.area = []
-          }
-        }
-      })
+    btnDepartment (data) {
+      this.$refs.department.show(data.id)
     },
     renderRadioForArea (data) {
       data.forEach(item => {
@@ -187,22 +172,7 @@ export default {
       })
       return data
     },
-    getGroup () {
-      let data = {endTime: '', name: '', pageCount: 10000000, pageIndex: 1, startTime: ''}
-      getManufactureGroupForPage(data).then(response => {
-        if (response.code === 1000) {
-          let data = response.data
-          if (data && data.list && data.list.length > 0) {
-            this.option.group = data.list
-          } else {
-            this.option.group = []
-          }
-        } else {
-          this.$Notice.error({desc: response.exception})
-        }
-      })
-    },
-    getDate () {
+    getData () {
       this.loading.table = true
       let data = {
         startTime: this.search.timeSpan[0] ? this.search.timeSpan[0].getTime() : '',
@@ -214,7 +184,7 @@ export default {
         pageIndex: this.page.current,
         pageCount: this.page.pageSize
       }
-      getManufactureForPage(data).then(response => {
+      api.data.getManufactureForPage(data).then(response => {
         if (response.code === 1000) {
           let data = response.data
           if (data && data.list && data.list.length > 0) {
@@ -235,11 +205,11 @@ export default {
     },
     pageChange (current) {
       this.page.current = current
-      this.getDate()
+      this.getData()
     },
     pageSizeChange (size) {
       this.page.pageSize = size
-      this.getDate()
+      this.getData()
     }
   }
 }

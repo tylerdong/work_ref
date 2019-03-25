@@ -2,7 +2,7 @@
  * @Author: dongweiliang@gmail.com
  * @Date: 2019-02-13 10:14:20
  * @LastEditors: dongweiliang@gmail.com
- * @LastEditTime: 2019-02-22 14:25:52
+ * @LastEditTime: 2019-03-20 09:54:49
  * @Description: file content
  */
 // import {
@@ -163,6 +163,7 @@ export default {
             'dictionary:factoryManager:group:edit',
             'dictionary:factoryManager:factory:create',
             'dictionary:factoryManager:factory:edit',
+            'dictionary:factoryManager:factory:department',
             'dictionary:marketWeight:edit',
             /* -----------------------长视频------------------------- */
             'trainingManage.longVideo.main.add',
@@ -171,7 +172,22 @@ export default {
             'trainingManage.longVideo.main.viewSub',
             'trainingManage.longVideo.sub.add',
             'trainingManage.longVideo.sub.edit',
-            'trainingManage.longVideo.sub.view'
+            'trainingManage.longVideo.sub.view',
+            'trainingManage.longVideoAudit.main.audit',
+            'trainingManage.longVideoAudit.main.down',
+            'trainingManage.longVideoAudit.sub.audit',
+            'trainingManage.longVideoAudit.sub.down',
+            /* -----------------------招聘------------------------- */
+            'trainingManage.recruitment.audit',
+            'trainingManage.recruitment.down',
+            'shortVideo.audit',
+            'shortVideo.down',
+            'shortVideo.release',
+            /* -----------------------学院------------------------- */
+            'academyManage.report.add',
+            'academyManage.report.edit',
+            'academyManage.audioAudit.audit',
+            'academyManage.audioAudit.down'
           ],
           menus: [
             {
@@ -206,7 +222,7 @@ export default {
                   path: 'factoryManager',
                   name: 'factoryManager',
                   code: 'factoryManager',
-                  meta: {icon: 'ios-ribbon', title: '生产厂家'},
+                  meta: {icon: 'ios-ribbon', title: '企业管理'},
                   component: 'view/factory-manager/'
                 },
                 {
@@ -359,6 +375,38 @@ export default {
               ]
             },
             {
+              path: '/registerUserManager',
+              name: 'registerUserManager',
+              code: 'registerUserManager',
+              meta: {icon: 'md-cube', title: '注册用户管理'},
+              component: 'components/main',
+              children: [
+                {
+                  path: 'registerUser',
+                  name: 'registerUser',
+                  code: 'registerUser',
+                  meta: {icon: 'ios-film', title: '注册用户管理'},
+                  component: 'view/userManage/'
+                }
+              ]
+            },
+            {
+              path: '/homeManage',
+              name: 'homeManage',
+              code: 'homeManage',
+              meta: {icon: 'md-cube', title: '首页管理'},
+              component: 'components/main',
+              children: [
+                {
+                  path: 'homeConfig',
+                  name: 'homeConfig',
+                  code: 'homeConfig',
+                  meta: {icon: 'ios-film', title: '首页配置'},
+                  component: 'view/home-config/'
+                }
+              ]
+            },
+            {
               path: '/training',
               name: 'training',
               code: 'training',
@@ -366,11 +414,25 @@ export default {
               component: 'components/main',
               children: [
                 {
+                  path: 'recruitment/create',
+                  name: 'training:recruitment:create',
+                  code: 'training:recruitment:create',
+                  meta: {icon: 'ios-body', title: '添加招聘信息'},
+                  component: 'view/training/recruitment/create'
+                },
+                {
                   path: 'recruitment/audit',
                   name: 'training:recruitment:audit',
                   code: 'training:recruitment:audit',
                   meta: {icon: 'ios-body', title: '招聘信息审核'},
                   component: 'view/training/recruitment/audit'
+                },
+                {
+                  path: 'recruitment/config',
+                  name: 'training:recruitment:config',
+                  code: 'training:recruitment:config',
+                  meta: {icon: 'ios-body', title: '招聘推荐配置'},
+                  component: 'view/training/recruitment/config'
                 },
                 {
                   path: 'longVideo/create',
@@ -385,6 +447,43 @@ export default {
                   code: 'training:longVideo:audit',
                   meta: {icon: 'ios-body', title: '审核长视频'},
                   component: 'view/training/longVideo/audit'
+                }
+              ]
+            },
+            {
+              path: '/academy',
+              name: 'academy',
+              code: 'academy',
+              meta: {icon: 'md-attach', title: '学院模块管理'},
+              component: 'components/main',
+              children: [
+                {
+                  path: 'audio/create',
+                  name: 'academy:audio:create',
+                  code: 'academy:audio:create',
+                  meta: {icon: 'ios-body', title: '添加音频课题'},
+                  component: 'view/academy/audio/create'
+                },
+                {
+                  path: 'audio/audit',
+                  name: 'academy:audio:audit',
+                  code: 'academy:audio:audit',
+                  meta: {icon: 'ios-body', title: '音频课题审核'},
+                  component: 'view/academy/audio/audit'
+                },
+                {
+                  path: 'report/create',
+                  name: 'academy:report:create',
+                  code: 'academy:report:create',
+                  meta: {icon: 'ios-body', title: '添加报告'},
+                  component: 'view/academy/report/add'
+                },
+                {
+                  path: 'report/audit',
+                  name: 'academy:report:audit',
+                  code: 'academy:report:audit',
+                  meta: {icon: 'ios-body', title: '报告审核'},
+                  component: 'view/academy/report/audit'
                 }
               ]
             }

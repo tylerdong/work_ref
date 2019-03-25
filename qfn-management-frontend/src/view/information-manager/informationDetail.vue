@@ -6,6 +6,9 @@
         <Button type='primary' @click="goback">返回</Button>
       </div>
       <Form ref="formAudit" :label-width="100" style="width: 750px;margin:0 auto;">
+        <FormItem label="文章封面">
+          <img class="img-in-dialog clear" :src="info.coverFdfsUrl" alt="封面">
+        </FormItem>
         <FormItem label="文章标题：">
             <p class='border'>{{info.title}}</p>
         </FormItem>
@@ -77,48 +80,47 @@
 </template>
 <script>
 import { getTime } from '@/libs/tools'
-import { getPrePreArticleById,getAllArticleStatus,getAllDeclareType } from '@/api/information'
+import { getPrePreArticleById, getAllArticleStatus, getAllDeclareType } from '@/api/information'
 export default {
-  data(){
-    return{
-      info:{},
-      statusList:[],
-      declareType:[]
+  data () {
+    return {
+      info: {},
+      statusList: [],
+      declareType: []
     }
   },
   watch: {
     '$route' (to, from) {
-        //加判断主要发现这个加载了之后，容易引起其他页面也发送请求，所以加了笨方法，加了条件判断，解决了其他页面请求数据加载的问题
-        if(this.$route.params.id){
-            getPrePreArticleById({id:this.$route.params.id}).then(res=>{
-              this.info=res.data;
-            })
-        }
-
+      // 加判断主要发现这个加载了之后，容易引起其他页面也发送请求，所以加了笨方法，加了条件判断，解决了其他页面请求数据加载的问题
+      if (this.$route.params.id) {
+        getPrePreArticleById({id: this.$route.params.id}).then(res => {
+          this.info = res.data
+        })
+      }
     }
   },
-  methods:{
-    timeToFormat(time){
-      return getTime(time,'second')
+  methods: {
+    timeToFormat (time) {
+      return getTime(time, 'second')
     },
-    getStatus(status){
-      for(let v of this.statusList){
-        if(v.key==status){
+    getStatus (status) {
+      for (let v of this.statusList) {
+        if (v.key == status) {
           return v.content
         }
       }
     },
-    goback(){
-      this.$router.push({path:'../addInformation/index'})
+    goback () {
+      this.$router.push({path: '../addInformation/index'})
     }
   },
-  created(){
-    Promise.all([getPrePreArticleById({id:this.$route.params.id}),getAllArticleStatus(),getAllDeclareType()]).then(res=>{
+  created () {
+    Promise.all([getPrePreArticleById({id: this.$route.params.id}), getAllArticleStatus(), getAllDeclareType()]).then(res => {
       let data = []
       for (let i = 0; i < res.length; i++) {
         if (res[i].code === 1000) {
           data = res[i].data
-          if (i === 0) this.info=data;
+          if (i === 0) this.info = data
           if (i === 1) this.statusList = data
           if (i === 2) this.declareType = data
         }

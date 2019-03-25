@@ -22,7 +22,7 @@
         </Select>
         来源
         <Select v-model="search.source" placeholder="请选择状态" transfer=transfer clearable class="length-230 m-r-10">
-          <Option v-for="(item, index) in option.source" :value="item.key" :key="index">{{ item.name }}</Option>
+          <Option v-for="(item, index) in option.source" :value="item.key" :key="index">{{ item.value }}</Option>
         </Select>
         <Button @click="searchData" :loading="loading.search" class="getData-btn" type="primary">搜索</Button>
         <Upload v-check-promission="elements.sourceData.data.excelImport"
@@ -54,7 +54,7 @@
   </div>
 </template>
 <script>
-import api from '@/api/data'
+import api from '@/api'
 import dateFns from 'date-fns'
 import {source, configurations} from '@/config/option'
 import elements from '@/config/elements'
@@ -103,6 +103,7 @@ export default {
   },
   mounted () {
     this.getStatus(true)
+    this.getWeightConfigList()
     let baseUrl = this.getCurrentBaseUrl()
     this.uploadAction = `${baseUrl}pretreatment/controller/preproductmanufacturerprice/importiExcelData`
   },
@@ -113,8 +114,15 @@ export default {
       this.search.status = [this.option.status[0].key, this.option.status[6].key]
       this.search.source = ''
     },
+    getWeightConfigList () {
+      api.dataManager.default.getWeightConfigOptions().then(res => {
+        if (res.code === 1000) {
+          this.option.source = this.option.source.concat(res.data[0].utilsVoList)
+        }
+      })
+    },
     getStatus (queryData) {
-      api.getAllDataStatus().then(response => {
+      api.data.default.getAllDataStatus().then(response => {
         if (response.code === 1000) {
           let data = response.data
           if (data && Array.isArray(data) && data.length > 0) {
@@ -147,7 +155,7 @@ export default {
         onOk: () => {
           let data = { ids: this.selected.map(item => item.id).join(','), productClassCode: this.code }
           this.loading.batchTrash = true
-          api.discardPreManufacturePrice(data).then(response => {
+          api.data.default.discardPreManufacturePrice(data).then(response => {
             if (response.code === 1000) {
               this.$Message.success(response.message)
               this.getData()
@@ -167,7 +175,7 @@ export default {
       if (this.selected.length === 0) return this.$Message.warning('请选择数据')
       let data = { ids: this.selected.map(item => item.id).join(','), productClassCode: this.code }
       this.loading.confirm = true
-      api.checkPreManufacturePrice(data).then(response => {
+      api.data.default.checkPreManufacturePrice(data).then(response => {
         if (response.code === 1000) {
           this.$Message.success(response.message)
           this.getData()
@@ -200,7 +208,7 @@ export default {
         priceType: this.priceType
       }
       this.selected = []
-      api.getAllPreManufactureInfoForPage(data).then(response => {
+      api.data.default.getAllPreManufactureInfoForPage(data).then(response => {
         if (response.code === 1000) {
           let data = response.data
           if (data && data.list && data.list.length > 0) {

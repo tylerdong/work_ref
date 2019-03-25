@@ -1,8 +1,8 @@
 <template>
   <Card shadow class="card-height">
-    <p slot="title">生产厂家</p>
+    <p slot="title">企业厂家</p>
     <Tabs value="factory" type="card" :animated="false">
-      <TabPane label="厂家信息维护" name="factory">
+      <TabPane label="企业信息维护" name="factory">
         <comp-factory></comp-factory>
       </TabPane>
       <TabPane label="集团信息管理" name="group">

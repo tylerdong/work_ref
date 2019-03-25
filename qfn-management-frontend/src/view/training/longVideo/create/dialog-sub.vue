@@ -1,5 +1,5 @@
 <template>
-  <Modal v-model="modal.show" :title="modal.title" :draggable="true">
+  <Modal v-model="modal.show" :title="modal.title" :draggable="true" @on-visible-change="stopPlay" :mask-closable="false">
     <Form ref="form" :model="form" :rules="rules" :label-width="120">
       <FormItem prop="themeId" label="主题">
         <Select v-model="form.themeId" placeholder="请选择主题" clearable>
@@ -12,22 +12,23 @@
       <FormItem prop="video" label="视频">
         <div class="fl upload-div">
           <Upload :action="uploadAction"
+                  :before-upload="beforUpload"
                   :on-success="uploadSuccess"
                   :on-error="uploadError"
                   :on-format-error="formatError"
-                  :max-size="51200">
-            <Button icon="ios-cloud-upload-outline" type="primary">上传</Button>
+                  :show-upload-list="false"
+                  :format="['aiv','mov','rmvb','rm','flv','mp4','3gp']"
+                  :max-size="819200">
+            <Button icon="ios-cloud-upload-outline" type="primary" :loading="loading.upload">上传</Button>
           </Upload>
-          <video v-if="form.videoFdfsUrl" class="video-in-dialog" :src="form.videoFdfsUrl" controls></video>
+          <video v-if="form.videoFdfsUrl" class="video-in-dialog" :src="form.videoFdfsUrl" controls ref="videoPlayer"></video>
         </div>
       </FormItem>
       <FormItem prop="videoTotalNum" label="当前集数">
         <InputNumber v-model="form.videoCurrentNum" :max="100" :min="1"></InputNumber>
       </FormItem>
       <FormItem prop="status" label="视频是否已完结">
-        <RadioGroup v-model="form.isFinish">
-          <Checkbox true-value="Y" false-value="N"></Checkbox>
-        </RadioGroup>
+        <Checkbox v-model="form.isFinish" true-value="Y" false-value="N"></Checkbox>
       </FormItem>
     </Form>
     <div slot="footer">
@@ -45,7 +46,7 @@ export default {
   data () {
     return {
       modal: {show: false, title: '新增'},
-      loading: {confirm: false, audit: false},
+      loading: {confirm: false, audit: false, upload: false},
       form: {
         id: '',
         themeId: '',
@@ -73,12 +74,17 @@ export default {
       this.form.videoFdfsUrl = ''
       this.modal.title = data ? '编辑' : '新增'
       if (data) {
-        this.form = data
+        this.form = this.deepClone(data)
       }
     },
     // 上传文件
+    beforUpload () {
+      this.loading.upload = true
+    },
     uploadSuccess (res) {
-      this.$Message.success(res.message)
+      this.form.videoFdfsUrl = res.data
+      this.$Message.success('上传成功')
+      this.loading.upload = false
     },
     uploadError (e, file) {
       this.$Message.error(file.message)
@@ -109,6 +115,11 @@ export default {
           })
         }
       })
+    },
+    stopPlay (data) {
+      if (data === false) {
+        this.$refs['videoPlayer'].pause()
+      }
     }
   }
 }

@@ -4,6 +4,9 @@
       <p slot="title">文章审核</p>
       <div class="mb-20 clearfix">
         <Form :model="form" :rules="rules" ref="form" label-position="right" :label-width="100" class="form">
+          <FormItem label="文章封面">
+            <img class="img-in-dialog clear" :src="form.coverFdfsUrl" alt="封面">
+          </FormItem>
           <FormItem label="文章标题">
             <Input v-model="form.title" disabled/>
           </FormItem>
@@ -82,6 +85,7 @@ export default {
       form: {
         id: '',
         title: '',
+        coverFdfsUrl: '',
         content: '',
         gmtModified: '',
         mediaPlatform: '',
@@ -145,6 +149,7 @@ export default {
           let data = res.data
           this.form.id = data.id
           this.form.title = data.title
+          this.form.coverFdfsUrl = data.coverFdfsUrl
           this.$refs.content.setHtml(res.data.content)
           this.form.gmtModified = data.gmtModified
           this.form.mediaPlatform = data.mediaPlatform

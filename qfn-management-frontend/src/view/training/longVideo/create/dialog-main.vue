@@ -13,6 +13,8 @@
                   :on-success="uploadSuccess"
                   :on-error="uploadError"
                   :on-format-error="formatError"
+                  :show-upload-list="false"
+                  :format="['psd','jpeg', 'jpg','png','gif','webp','tiff','bmp']"
                   :max-size="51200">
             <Button icon="ios-cloud-upload-outline" type="primary">上传</Button>
           </Upload>
@@ -81,12 +83,13 @@ export default {
       this.form.coverFdfsUrl = ''
       this.modal.title = data ? '编辑' : '新增'
       if (data) {
-        this.form = data
+        this.form = this.deepClone(data)
       }
     },
     // 上传文件
     uploadSuccess (res) {
-      this.$Message.success(res.message)
+      this.form.coverFdfsUrl = res.data
+      this.$Message.success('上传成功')
     },
     uploadError (e, file) {
       this.$Message.error(file.message)

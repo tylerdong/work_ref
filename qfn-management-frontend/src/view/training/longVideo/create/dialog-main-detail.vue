@@ -1,11 +1,11 @@
 <template>
-  <Modal v-model="modal.show" :title="modal.title" closable footer-hide draggable>
+  <Modal v-model="modal.show" :title="modal.title" width="50%" closable footer-hide draggable>
     <div class="scrolled-modal">
       <table class="custom-table">
         <thead>
-        <tr><th>属性</th><th>值</th></tr>
+        <tr><th class="property-length">属性</th><th>值</th></tr>
         </thead>
-        <tbody class="">
+        <tbody>
           <tr v-for="(item, index) in this.props" :key="index">
             <td>{{item.name}}</td>
             <td>
@@ -60,4 +60,7 @@ export default {
 </script>
 
 <style scoped>
+  .property-length {
+    width: 30%;
+  }
 </style>

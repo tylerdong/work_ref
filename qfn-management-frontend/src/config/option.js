@@ -1,13 +1,21 @@
 import dateFns from 'date-fns' // 引入日期格式化
 import { getProductCategoryConfig } from '@/api/dataManager'
 
-const source = [
-  {key: 'CCF', name: '化纤网'},
-  {key: 'CCFEI', name: '中纤网'},
-  {key: 'ZC', name: '卓创'},
-  {key: 'ETL', name: '爬虫'}
-]
+/**
+ * 来源
+ * @type {*[]}
+ */
+const source = [{key: 'ETL', value: '爬虫'}]
+/**
+ * 币种
+ * @type {string[]}
+ */
 const currency = ['元', '美元']
+/**
+ * 长视频提供者类型
+ * @type {string[]}
+ */
+const sourceType = ['个人', '公司']
 /**
  * 源数据管理，13中产品
  * @type {*[]}
@@ -83,7 +91,8 @@ let tableData = [
   {title: '单位', key: 'unit', minWidth: 90, align: 'center'},
   {title: '价格类型', key: 'priceType', minWidth: 100, align: 'center'},
   {title: '价格条件', key: 'priceCondition', minWidth: 100, align: 'center'},
-  {title: '纤度', minWidth: 100, key: 'fiberNum', align: 'center'},
+  {title: '纤度', minWidth: 120, key: 'fiberNum', align: 'center'},
+  {title: '来源', minWidth: 100, key: 'source', align: 'center'},
   {title: '等级', minWidth: 100, key: 'grade', align: 'center'},
   {title: '特性', minWidth: 100, key: 'feature', align: 'center'},
   {title: '光泽', minWidth: 100, key: 'gloss', align: 'center'},
@@ -185,11 +194,6 @@ const ruleArray = {
   manufacturer: [{required: true, message: '生产厂家为必填项', trigger: 'blur change'}],
   remark: [{required: true, message: '备注为必填项', trigger: 'blur change'}]
 }
-/**
- * 长视频提供者类型
- * @type {string[]}
- */
-const sourceType = ['个人', '公司']
 export {
   currency,
   source,
