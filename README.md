@@ -13,7 +13,7 @@
 - 年会抽奖程序
 ## qfn-management-frontend
 - 化纤报价app后台
-## base-manage-frontend  react后台框架
+## mobile-transact.zip  react后台框架
 - react-loadable按组件打包，异步加载组件
 - 自动路由，按文件夹自动生成路由模板
 - 自动页面组件骨架
