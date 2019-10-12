@@ -24,9 +24,8 @@ export const clearFileContent = (filePath, headNotes, headContent) => {
     notes.push(headContent)
   }
   fs.writeFile(filePath, notes.join(''), function (err) {
-      if (err) throw err;
-    }
-  )
+    if (err) throw err;
+  })
 }
 
 /**
@@ -77,7 +76,7 @@ export const checkExits = (file) => {
   let stat
   try {
     stat = fs.statSync(file)
-  } catch ( e ) {
+  } catch (e) {
     return false
   }
   return stat.isFile() || stat.isDirectory()
