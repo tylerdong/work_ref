@@ -17,7 +17,7 @@
     "date-fns": "^1.29.0",
     "element-ui": "^2.4.8",
     "file-saver": "^2.0.0-rc.3",
-    "jquery": "^3.3.1",
+    "jquery": "^3.5.0",
     "js-base64": "^2.4.9",
     "jsbarcode": "^3.11.0",
     "jsencrypt": "^3.0.0-rc.1",
